@@ -1,0 +1,158 @@
+{% extends "base.html" %}
+
+{% block title %}VyapaarNiti Club - VyapaarNiti{% endblock %}
+
+{% block hero %}
+    <!-- Club Hero Section -->    <section class="club-hero">
+        <div class="container">
+            <div class="club-hero-content">
+                <h1 class="club-hero-title">VyapaarNiti Club</h1>
+                <p class="club-hero-subtitle">A Business Growth & Networking Platform for SMBs</p>
+                <p class="club-description">Join our community of entrepreneurs and business owners to learn, network, and grow together through expert-led sessions and collaborative opportunities.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+
+    <!-- Club Features Section -->
+    <section class="club-features">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-users-cog"></i>
+                    </div>
+                    <h3>Learn from Industry Experts</h3>
+                    <p>Participate in daily live sessions with business domain experts</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-network-wired"></i>
+                    </div>
+                    <h3>Connect with Business Owners</h3>
+                    <p>Exchange ideas and collaborate with other business owners</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Get Practical Strategies</h3>
+                    <p>Learn proven strategies to grow your business effectively</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Who It's For Section -->
+    <section class="who-its-for">
+        <div class="container">
+            <h2 class="section-title">Who it is for?</h2>
+            <div class="target-audience-grid">
+                <div class="audience-card">
+                    <div class="audience-icon">
+                        <i class="fas fa-store"></i>
+                    </div>
+                    <h3>Small Business Owners</h3>
+                    <p>Retailers, Manufacturers, Service Providers</p>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Entrepreneurs & Startups</h3>
+                    <p>Looking to scale their business operations</p>
+                </div>
+                <div class="audience-card">
+                    <div class="audience-icon">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <h3>Self-Employed Professionals</h3>
+                    <p>Consultants, Freelancers, Traders</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Top Benefits Section -->
+    <section class="top-benefits">
+        <div class="container">
+            <h2 class="section-title">Top Benefits for Business Owners</h2>
+            <div class="benefits-grid">
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-brain"></i>
+                    </div>
+                    <h3>Learn from Experts</h3>
+                    <p>Get real-world business strategies & tips from business domain experts.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3>Expand Your Network</h3>
+                    <p>Meet and collaborate with other business owners through networking events.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-trophy"></i>
+                    </div>
+                    <h3>Grow Your Business</h3>
+                    <p>Learn sales, marketing, finance, operations & automation for success.</p>
+                </div>
+                <div class="benefit-card">
+                    <div class="benefit-icon">
+                        <i class="fas fa-gift"></i>
+                    </div>
+                    <h3>100% Free</h3>
+                    <p>No hidden charges! No membership fees, no commissions – just learning & networking.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Monthly Networking Events Section -->
+    <section class="networking-events">
+        <div class="container">
+            <div class="events-content">
+                <div class="events-text">
+                    <h2 class="section-title">Monthly Networking Events</h2>
+                    <h3 class="events-subtitle">Meet, Connect & Collaborate with Business Owners Like You!</h3>
+                    <div class="events-details">
+                        <div class="detail-item">
+                            <i class="fas fa-calendar-alt"></i>
+                            <p>Once a month, we host a virtual networking event.</p>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-users"></i>
+                            <p>Get randomly paired in breakout rooms for 1-on-1 business discussions.</p>
+                        </div>
+                        <div class="detail-item">
+                            <i class="fas fa-link"></i>
+                            <p>Build new partnerships, explore collaborations, and expand your network.</p>
+                        </div>
+                    </div>
+                    <button class="btn-primary join-club-btn">Join VyapaarNiti Club</button>
+                </div>
+                <div class="events-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-video"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="club-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Grow Your Business?</h2>
+                <p class="cta-description">Join thousands of business owners who are already growing together</p>                <div class="cta-buttons">                    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Join Now - It's Free</a>
+                    <a href="{{ url_for('main.experts') }}" class="btn btn-outline">Browse Experts</a>
+        </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

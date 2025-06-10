@@ -1,0 +1,193 @@
+{% extends "base.html" %}
+
+{% block title %}Home - VyapaarNiti{% endblock %}{% block hero %}
+    <!-- Hero Section -->
+    <section class="hero">
+        <div class="hero-overlay"></div>
+        <div class="hero-container">
+            <div class="hero-content">                <h1 class="hero-title">Get advice from the world's top experts</h1>
+                <p class="hero-subtitle">One Stop Solution For All Your Business Needs</p>
+                <!-- <div class="hero-search">
+                    <div class="search-container">
+                        <input type="text" placeholder="What advice do you need?" class="search-input">
+                        <button class="search-btn">
+                            <i class="fas fa-search"></i>
+                        </button>
+                    </div>
+                </div> -->
+                <div class="hero-stats">
+                    <div class="stat-item">
+                        <span class="stat-number">10,000+</span>
+                        <span class="stat-label">Experts</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">500k+</span>
+                        <span class="stat-label">Calls completed</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">4.9</span>
+                        <span class="stat-label">Average rating</span>
+                    </div>
+                </div>
+            </div>        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+<!-- Featured Experts Section -->
+    <section class="featured-experts">
+        <div class="container">
+            <h2 class="section-title">Featured experts</h2>            <div class="experts-grid">
+                {% for expert in experts %}
+                <div class="expert-card">
+                    <div class="expert-avatar">
+                        <img src="{{ url_for('static', filename=expert.avatar_url.replace('static/', '')) }}" alt="{{ expert.name }}">
+                    </div>
+                    <div class="expert-info">
+                        <h3>{{ expert.name }}</h3>
+                        <p class="expert-title">{{ expert.title }}</p>
+                        <p class="expert-description">{{ expert.description }}</p>
+                        <div class="expert-rating">
+                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-text">{{ expert.reviews_count }} reviews</span>
+                        </div>
+                        <div class="expert-price">₹{{ expert.hourly_rate }}/hour</div>
+                        <button class="expert-book-btn">Book Now</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div><div class="view-all-experts">
+                <a href="{{ url_for('main.experts') }}"><button class="btn-primary">View all experts</button></a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="categories">
+        <div class="container">
+            <h2 class="section-title">Popular categories</h2>
+            <div class="categories-grid">
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                    <h3>Startups</h3>
+                    <p>Get advice from successful entrepreneurs</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3>Marketing</h3>
+                    <p>Scale your business with proven strategies</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-briefcase"></i>
+                    </div>
+                    <h3>Career</h3>
+                    <p>Advance your career with expert guidance</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-dollar-sign"></i>
+                    </div>
+                    <h3>Finance</h3>
+                    <p>Make smart financial decisions</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-code"></i>
+                    </div>
+                    <h3>Technology</h3>
+                    <p>Stay ahead with tech insights</p>
+                </div>
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-heart"></i>
+                    </div>
+                    <h3>Life Coaching</h3>
+                    <p>Transform your personal life</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    
+
+    <!-- How it Works Section -->
+    <section class="how-it-works">
+        <div class="container">
+            <h2 class="section-title">How it works</h2>
+            <div class="steps-grid">
+                <div class="step">
+                    <div class="step-number">1</div>
+                    <h3>Browse experts</h3>
+                    <p>Find the perfect advisor for your needs from our vetted community</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">2</div>
+                    <h3>Book a call</h3>
+                    <p>Schedule a convenient time that works for both of you</p>
+                </div>
+                <div class="step">
+                    <div class="step-number">3</div>
+                    <h3>Get clarity</h3>
+                    <p>Have a meaningful conversation and get the advice you need</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Testimonials</h2>
+            <div class="testimonials-grid">                <div class="testimonial-card">                    <div class="testimonial-content">
+                        <p>"The advice I received helped me secure ₹2M in funding for my startup. Game changer!"</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="{{ url_for('static', filename='images/Testimonial Img/4.png') }}" alt="Alex">
+                        <div>
+                            <strong>Alex Chen</strong>
+                            <span>Startup Founder</span>
+                        </div>
+                    </div>
+                </div>                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"I got promoted to senior director after implementing the career strategies discussed."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="{{ url_for('static', filename='images/Testimonial Img/5.png') }}" alt="Rachel">
+                        <div>
+                            <strong>Rachel Williams</strong>
+                            <span>Product Manager</span>
+                        </div>
+                    </div>
+                </div>                <div class="testimonial-card">
+                    <div class="testimonial-content">
+                        <p>"The marketing insights helped us increase our revenue by 300% in 6 months."</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <img src="{{ url_for('static', filename='images/Testimonial Img/6.png') }}" alt="David">
+                        <div>
+                            <strong>David Park</strong>
+                            <span>CEO</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>    </section>
+
+    <!-- CTA Section -->
+ <!--   <section class="cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2>Ready to get clarity?</h2>
+                <p>Join thousands who've transformed their careers and businesses</p>
+                <button class="btn-primary btn-large">Get started today</button>
+            </div>
+        </div>
+    </section>
+    -->
+{% endblock %}

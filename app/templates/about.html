@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}About Us - VyapaarNiti{% endblock %}
+
+{% block hero %}
+    <!-- About Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="about-hero-content">
+                <h1 class="about-hero-title">About VyapaarNiti</h1>
+                <p class="about-hero-subtitle">Empowering small and medium businesses across India with actionable strategies and hands-on execution support.</p>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+
+    <!-- Our Journey Section -->
+    <section class="our-journey">
+        <div class="container">
+            <div class="journey-content">
+                <div class="journey-text">
+                    <h2 class="section-title">Our Journey</h2>
+                    <p class="journey-description">
+                        At VyapaarNiti, our journey began with a singular vision: to empower small and medium businesses (SMBs) across India. Established in 2023, we recognized the unique challenges faced by entrepreneurs and small business owners. With a commitment to offering more than just advice, we set out to create a consulting platform that provides actionable strategies and hands-on execution support.
+                    </p>
+                    <p class="journey-description">
+                        What started as a small initiative has now evolved into a leading business coaching and consulting resource, helping thousands of SMBs realize their growth potential and achieve sustainable success.
+                    </p>
+                </div>
+                <div class="journey-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-rocket"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Purpose and Goals Section -->
+    <section class="purpose-goals">
+        <div class="container">
+            <div class="purpose-content">
+                <div class="purpose-image">
+                    <div class="image-placeholder">
+                        <i class="fas fa-bullseye"></i>
+                    </div>
+                </div>
+                <div class="purpose-text">
+                    <h2 class="section-title">Purpose and Goals</h2>
+                    <p class="purpose-description">
+                        Our purpose at VyapaarNiti is simple yet profound: we strive to equip SMBs with the tools, knowledge, and support they need to thrive in a competitive landscape. We aim to foster an environment where business owners can turn their visions into realities.
+                    </p>
+                    <p class="purpose-description">
+                        Our goals are to accelerate growth, enhance profitability, and solve tangible business challenges for our clients. We believe that every entrepreneur deserves access to practical knowledge and guidance, and we are dedicated to delivering results through personalized consulting that adapts to each unique business context.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Our Values Section -->
+    <section class="our-values">
+        <div class="container">
+            <h2 class="section-title text-center">Our Core Values</h2>
+            <div class="values-grid">
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-handshake"></i>
+                    </div>
+                    <h3 class="value-title">Trust & Transparency</h3>
+                    <p class="value-description">Building lasting relationships through honest communication and reliable delivery on our promises.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 class="value-title">Innovation</h3>
+                    <p class="value-description">Constantly evolving our approach to provide cutting-edge solutions for modern business challenges.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-users"></i>
+                    </div>
+                    <h3 class="value-title">Client-Centric Approach</h3>
+                    <p class="value-description">Tailoring our services to meet the unique needs and goals of each business we serve.</p>
+                </div>
+                <div class="value-card">
+                    <div class="value-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h3 class="value-title">Results-Driven</h3>
+                    <p class="value-description">Focusing on measurable outcomes and sustainable growth for long-term business success.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Team Section -->
+    <section class="our-team">
+        <div class="container">
+            <h2 class="section-title text-center">Meet Our Team</h2>
+            <p class="team-subtitle">Experienced professionals dedicated to your business success</p>
+            <div class="team-grid">
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://via.placeholder.com/300x300/007bff/ffffff?text=CEO" alt="CEO" loading="lazy">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Rajesh Kumar</h3>
+                        <p class="member-role">Founder & CEO</p>
+                        <p class="member-description">15+ years of experience in business strategy and SMB consulting.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://via.placeholder.com/300x300/28a745/ffffff?text=COO" alt="COO" loading="lazy">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Priya Sharma</h3>
+                        <p class="member-role">Chief Operating Officer</p>
+                        <p class="member-description">Expert in operations management and business process optimization.</p>
+                    </div>
+                </div>
+                <div class="team-member">
+                    <div class="member-image">
+                        <img src="https://via.placeholder.com/300x300/dc3545/ffffff?text=CTO" alt="CTO" loading="lazy">
+                    </div>
+                    <div class="member-info">
+                        <h3 class="member-name">Amit Patel</h3>
+                        <p class="member-role">Chief Technology Officer</p>
+                        <p class="member-description">Technology leader with expertise in digital transformation and innovation.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Call to Action Section -->
+    <section class="about-cta">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Transform Your Business?</h2>
+                <p class="cta-description">Join thousands of successful businesses that have accelerated their growth with VyapaarNiti.</p>
+                <div class="cta-buttons">
+                    <a href="{{ url_for('auth.signup') }}" class="btn btn-primary">Get Started Today</a>
+                    <a href="#" class="btn btn-outline">Browse Experts</a>
+                </div>
+            </div>        </div>
+    </section>
+{% endblock %}
