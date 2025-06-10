@@ -16,7 +16,7 @@
             <div class="nav-container">
                 <div class="nav-logo">
                     <a href="{{ url_for('main.index') }}">
-                        <img src="{{ url_for('static', filename='images/logo.png') }}" alt="VyapaarNiti" class="logo">
+                        <img src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="VyapaarNiti" class="logo">
                     </a>
                 </div>                <ul class="nav-menu">
                     <li><a href="{{ url_for('main.index') }}" class="nav-link {% if active_page == 'home' %}active{% endif %}">Home</a></li>
@@ -78,7 +78,7 @@
             </div>
             <div class="footer-bottom">
                 <div class="footer-logo">
-                    <img src="{{ url_for('static', filename='images/logo.png') }}" alt="VyapaarNiti" class="footer-logo-img">
+                    <img src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="VyapaarNiti" class="footer-logo-img">
                 </div>
                 <div class="footer-social">
                     <a href="#"><i class="fab fa-twitter"></i></a>
