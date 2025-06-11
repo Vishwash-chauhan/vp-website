@@ -35,24 +35,33 @@
 
 {% block main %}
 <!-- Featured Experts Section -->
+<!--
     <section class="featured-experts">
         <div class="container">
             <h2 class="section-title">Featured experts</h2>            <div class="experts-grid">
                 {% for expert in experts %}
                 <div class="expert-card">
                     <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename=expert.avatar_url.replace('static/', '')) }}" alt="{{ expert.name }}">
+                        {% if expert.profile_picture %}
+                            <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/experts/' + (loop.index % 3 + 1)|string + '.png') }}" alt="{{ expert.name }}">
+                        {% endif %}
                     </div>
                     <div class="expert-info">
                         <h3>{{ expert.name }}</h3>
-                        <p class="expert-title">{{ expert.title }}</p>
-                        <p class="expert-description">{{ expert.description }}</p>
+                        <p class="expert-title">{{ expert.expertise }}</p>
+                        <p class="expert-description">{{ expert.bio[:100] + '...' if expert.bio and expert.bio|length > 100 else expert.bio or expert.about[:100] + '...' if expert.about and expert.about|length > 100 else expert.about or 'Professional expertise in ' + expert.expertise }}</p>
                         <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
+                            <span class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < expert.rating|int %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                            </span>
                             <span class="rating-text">{{ expert.reviews_count }} reviews</span>
                         </div>
                         <div class="expert-price">₹{{ expert.hourly_rate }}/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
+                        <a href="{{ url_for('main.expert_detail', expert_id=expert.id) }}" class="expert-book-btn">View Profile</a>
                     </div>
                 </div>
                 {% endfor %}
@@ -61,6 +70,7 @@
             </div>
         </div>
     </section>
+-->
 
     <!-- Categories Section -->
     <section class="categories">

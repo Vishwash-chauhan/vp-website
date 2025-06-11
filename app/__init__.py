@@ -2,6 +2,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
 from flask_login import LoginManager
+import base64
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -30,6 +31,13 @@ def create_app():
     def inject_current_year():
         from datetime import datetime
         return {'current_year': datetime.now().year}
+    
+    # Add base64 filter for template
+    @app.template_filter('b64encode')
+    def b64encode_filter(data):
+        if data:
+            return base64.b64encode(data).decode('utf-8')
+        return ''
 
     from app.routes.auth import auth as auth_blueprint
     from app.routes.main import main as main_blueprint

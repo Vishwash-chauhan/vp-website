@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block title %}{{ expert.name }} - Expert Profile - VyapaarNiti{% endblock %}
+
+{% block hero %}
+    <!-- Expert Profile Hero Section -->
+    <section class="expert-profile-hero">
+        <div class="container">
+            <div class="expert-profile-content">
+                <div class="expert-avatar-large">
+                    {% if expert.profile_picture %}
+                        <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
+                    {% else %}
+                        <img src="{{ url_for('static', filename='images/experts/1.png') }}" alt="{{ expert.name }}">
+                    {% endif %}
+                </div>
+                <div class="expert-info-large">
+                    <h1 class="expert-name">{{ expert.name }}</h1>
+                    <p class="expert-expertise">{{ expert.expertise }}</p>
+                    <div class="expert-rating">
+                        <span class="rating-stars">
+                            {% for i in range(5) %}
+                                {% if i < expert.rating|int %}★{% else %}☆{% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="rating-text">{{ expert.rating }}/5 ({{ expert.reviews_count }} reviews)</span>
+                    </div>
+                    <div class="expert-price-large">₹{{ expert.hourly_rate }}/hour</div>
+                    <div class="expert-status">
+                        {% if expert.is_available %}
+                            <span class="status-available">Available</span>
+                        {% else %}
+                            <span class="status-unavailable">Unavailable</span>
+                        {% endif %}
+                        {% if expert.is_verified %}
+                            <span class="status-verified">Verified Expert</span>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+    <section class="expert-details">
+        <div class="container">
+            <div class="expert-detail-grid">
+                <div class="expert-main-content">
+                    {% if expert.about %}
+                    <div class="about-section">
+                        <h2>About</h2>
+                        <p>{{ expert.about }}</p>
+                    </div>
+                    {% endif %}
+                    
+                    {% if expert.bio %}
+                    <div class="bio-section">
+                        <h2>Bio</h2>
+                        <p>{{ expert.bio }}</p>
+                    </div>
+                    {% endif %}
+                </div>
+                
+                <div class="expert-sidebar">
+                    <div class="contact-info">
+                        <h3>Contact Information</h3>
+                        {% if expert.contact %}
+                            <p><strong>Contact:</strong> {{ expert.contact }}</p>
+                        {% endif %}
+                        {% if expert.phone_number %}
+                            <p><strong>Phone:</strong> {{ expert.phone_number }}</p>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="social-links">
+                        <h3>Social Profiles</h3>
+                        {% if expert.linkedin_profile %}
+                            <a href="{{ expert.linkedin_profile }}" target="_blank" class="social-link">
+                                <i class="fab fa-linkedin"></i> LinkedIn
+                            </a>
+                        {% endif %}
+                        {% if expert.instagram_profile %}
+                            <a href="{{ expert.instagram_profile }}" target="_blank" class="social-link">
+                                <i class="fab fa-instagram"></i> Instagram
+                            </a>
+                        {% endif %}
+                        {% if expert.twitter_profile %}
+                            <a href="{{ expert.twitter_profile }}" target="_blank" class="social-link">
+                                <i class="fab fa-twitter"></i> Twitter
+                            </a>
+                        {% endif %}
+                        {% if expert.portfolio_link %}
+                            <a href="{{ expert.portfolio_link }}" target="_blank" class="social-link">
+                                <i class="fas fa-globe"></i> Portfolio
+                            </a>
+                        {% endif %}
+                    </div>
+                    
+                    {% if expert.is_available %}
+                    <div class="booking-section">
+                        <button class="btn-primary book-consultation-btn">Book Consultation</button>
+                    </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}

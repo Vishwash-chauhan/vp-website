@@ -1,44 +1,44 @@
-from flask import Blueprint, render_template
+from flask import Blueprint, render_template, request, jsonify
+from app.models import Expert
 
 main = Blueprint('main', __name__)
 
 @main.route('/')
 def index():
-    # Sample featured experts data
-    featured_experts = [
-        {
-            'name': 'John Smith',
-            'title': 'Former VP at Google',
-            'description': 'Startup strategy, product management, scaling teams',
-            'avatar_url': 'images/experts/1.png',
-            'reviews_count': 127,
-            'hourly_rate': 200,
-            'rating': 4.9
-        },
-        {
-            'name': 'Sarah Davis',
-            'title': 'Marketing Director at Tesla',
-            'description': 'Growth marketing, brand strategy, digital campaigns',
-            'avatar_url': 'images/experts/2.png',
-            'reviews_count': 89,
-            'hourly_rate': 150,
-            'rating': 4.8
-        },
-        {
-            'name': 'Michael Johnson',
-            'title': 'Serial Entrepreneur',
-            'description': 'Fundraising, scaling startups, business development',
-            'avatar_url': 'images/experts/3.png',
-            'reviews_count': 203,
-            'hourly_rate': 300,
-            'rating': 5.0
-        }
-    ]
+    # Get verified experts (as featured experts)
+    featured_experts = Expert.get_verified()[:3]
+    
+    # If no verified experts, get first 3 available experts
+    if not featured_experts:
+        featured_experts = Expert.get_all_available()[:3]
+    
     return render_template('index.html', active_page='home', experts=featured_experts)
 
 @main.route('/experts')
 def experts():
-    return render_template('experts.html', active_page='experts')
+    # Get all available experts
+    all_experts = Expert.get_all_available()
+    return render_template('experts.html', active_page='experts', experts=all_experts)
+
+@main.route('/expert/<int:expert_id>')
+def expert_detail(expert_id):
+    expert = Expert.query.get_or_404(expert_id)
+    return render_template('expert_detail.html', active_page='experts', expert=expert)
+
+@main.route('/api/experts/search')
+def search_experts():
+    """API endpoint for searching experts"""
+    search_term = request.args.get('q', '')
+    expertise = request.args.get('expertise', '')
+    
+    if search_term:
+        experts = Expert.search_experts(search_term)
+    elif expertise:
+        experts = Expert.get_by_expertise(expertise)
+    else:
+        experts = Expert.get_all_available()
+    
+    return jsonify([expert.to_dict() for expert in experts])
 
 @main.route('/club')
 def club():

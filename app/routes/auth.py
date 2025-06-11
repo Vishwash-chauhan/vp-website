@@ -28,9 +28,13 @@ def logout():
 def signup():
     form = SignupForm()
     if form.validate_on_submit():
-        user = User(contact=form.contact.data)
+        user = User(
+            name=form.name.data,
+            contact=form.contact.data,
+            email=form.email.data if form.email.data else None
+        )
         user.set_password(form.password.data)
-        user.save()  # Assuming a save method exists in the User model
+        user.save()
         flash('Account created successfully! You can now log in.', 'success')
         return redirect(url_for('auth.login'))
     return render_template('signup.html', form=form)

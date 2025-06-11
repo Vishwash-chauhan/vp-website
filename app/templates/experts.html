@@ -28,18 +28,18 @@
                     </div>
                 </div>
 
-                <!-- Filters -->
-                <div class="filters-section">
+                <!-- Filters -->                <div class="filters-section">
                     <div class="filter-group">
                         <label for="categoryFilter">Category:</label>
                         <select id="categoryFilter" class="filter-select">
                             <option value="">All Categories</option>
-                            <option value="startup">Startup Strategy</option>
-                            <option value="marketing">Marketing & Growth</option>
+                            <option value="ai">AI & Machine Learning</option>
+                            <option value="data">Data Science</option>
+                            <option value="construction">Construction & Design</option>
+                            <option value="marketing">Marketing & Brand Strategy</option>
+                            <option value="content">Content Creation</option>
                             <option value="technology">Technology</option>
-                            <option value="finance">Finance & Investment</option>
-                            <option value="career">Career Development</option>
-                            <option value="leadership">Leadership</option>
+                            <option value="business">Business Development</option>
                         </select>
                     </div>
 
@@ -71,196 +71,42 @@
 
     <!-- Results Section -->
     <section class="experts-results">
-        <div class="container">
-            <div class="results-header">
+        <div class="container">            <div class="results-header">
                 <h2 class="results-title">Available Experts</h2>
                 <div class="results-count">
-                    <span id="resultsCount">12 experts found</span>
+                    <span id="resultsCount">{{ experts|length }} experts found</span>
                 </div>
             </div>
 
             <!-- Experts Grid -->
-            <div class="all-experts-grid">                <!-- Expert 1 -->
-                <div class="expert-card" data-category="startup" data-price="200" data-rating="5">
+            <div class="all-experts-grid">
+                {% for expert in experts %}
+                <div class="expert-card" data-category="{{ expert.expertise|lower }}" data-price="{{ expert.hourly_rate }}" data-rating="{{ expert.rating }}">
                     <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/experts/1.png') }}" alt="John Smith">
+                        {% if expert.profile_picture %}
+                            <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/experts/' + (loop.index % 3 + 1)|string + '.png') }}" alt="{{ expert.name }}">
+                        {% endif %}
                     </div>
                     <div class="expert-info">
-                        <h3>John Smith</h3>
-                        <p class="expert-title">Former VP at Google</p>
-                        <p class="expert-description">Startup strategy, product management, scaling teams</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">127 reviews</span>
+                        <h3>{{ expert.name }}</h3>
+                        <p class="expert-title">{{ expert.expertise }}</p>
+                        <p class="expert-description">{{ expert.bio[:100] + '...' if expert.bio and expert.bio|length > 100 else expert.bio or expert.about[:100] + '...' if expert.about and expert.about|length > 100 else expert.about or 'Professional expertise in ' + expert.expertise }}</p>
+                        <div class="expert-rating">
+                            <span class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < expert.rating|int %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                            </span>
+                            <span class="rating-text">{{ expert.reviews_count }} reviews</span>
                         </div>
-                        <div class="expert-price">₹200/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
+                        <div class="expert-price">₹{{ expert.hourly_rate }}/hour</div>
+                        <a href="{{ url_for('main.expert_detail', expert_id=expert.id) }}" class="expert-book-btn">View Profile</a>
                     </div>
-                </div>                <!-- Expert 2 -->
-                <div class="expert-card" data-category="marketing" data-price="150" data-rating="5">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/experts/2.png') }}" alt="Sarah Davis">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Sarah Davis</h3>
-                        <p class="expert-title">Marketing Director at Tesla</p>
-                        <p class="expert-description">Growth marketing, brand strategy, digital campaigns</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">89 reviews</span>
-                        </div>
-                        <div class="expert-price">₹150/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 3 -->
-                <div class="expert-card" data-category="startup" data-price="300" data-rating="5">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/experts/3.png') }}" alt="Michael Johnson">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Michael Johnson</h3>
-                        <p class="expert-title">Serial Entrepreneur</p>
-                        <p class="expert-description">Fundraising, scaling startups, business development</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">203 reviews</span>
-                        </div>
-                        <div class="expert-price">₹300/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 4 -->
-                <div class="expert-card" data-category="finance" data-price="250" data-rating="5">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/testimonials/4.png') }}" alt="Alex Chen">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Alex Chen</h3>
-                        <p class="expert-title">Investment Director at Sequoia</p>
-                        <p class="expert-description">Venture capital, startup funding, financial strategy</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">156 reviews</span>
-                        </div>
-                        <div class="expert-price">₹250/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 5 -->
-                <div class="expert-card" data-category="career" data-price="180" data-rating="5">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/testimonials/5.png') }}" alt="Rachel Williams">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Rachel Williams</h3>
-                        <p class="expert-title">Senior Product Manager at Microsoft</p>
-                        <p class="expert-description">Career development, product strategy, team leadership</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">94 reviews</span>
-                        </div>
-                        <div class="expert-price">₹180/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 6 -->
-                <div class="expert-card" data-category="technology" data-price="220" data-rating="5">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/testimonials/6.png') }}" alt="David Park">
-                    </div>
-                    <div class="expert-info">
-                        <h3>David Park</h3>
-                        <p class="expert-title">CTO at Airbnb</p>
-                        <p class="expert-description">Technology architecture, engineering management, scaling tech teams</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">78 reviews</span>
-                        </div>
-                        <div class="expert-price">₹220/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 7 -->
-                <div class="expert-card" data-category="marketing" data-price="170" data-rating="4">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/experts/1.png') }}" alt="Lisa Rodriguez">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Lisa Rodriguez</h3>
-                        <p class="expert-title">Growth Marketing Lead at Stripe</p>
-                        <p class="expert-description">Performance marketing, conversion optimization, analytics</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★☆</span>
-                            <span class="rating-text">67 reviews</span>
-                        </div>
-                        <div class="expert-price">₹170/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 8 -->
-                <div class="expert-card" data-category="leadership" data-price="280" data-rating="5">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/experts/2.png') }}" alt="James Wilson">
-                    </div>
-                    <div class="expert-info">
-                        <h3>James Wilson</h3>
-                        <p class="expert-title">Former CEO at Slack</p>
-                        <p class="expert-description">Executive leadership, organizational culture, strategic planning</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">142 reviews</span>
-                        </div>
-                        <div class="expert-price">₹280/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 9 -->
-                <div class="expert-card" data-category="finance" data-price="190" data-rating="4">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/experts/3.png') }}" alt="Maria Garcia">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Maria Garcia</h3>
-                        <p class="expert-title">CFO at Shopify</p>
-                        <p class="expert-description">Financial planning, IPO preparation, corporate finance</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★☆</span>
-                            <span class="rating-text">85 reviews</span>
-                        </div>
-                        <div class="expert-price">₹190/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 10 -->
-                <div class="expert-card" data-category="technology" data-price="160" data-rating="4">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/testimonials/4.png') }}" alt="Kevin Zhang">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Kevin Zhang</h3>
-                        <p class="expert-title">Senior Engineer at Netflix</p>
-                        <p class="expert-description">Cloud architecture, microservices, system design</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★☆</span>
-                            <span class="rating-text">52 reviews</span>
-                        </div>
-                        <div class="expert-price">₹160/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 11 -->
-                <div class="expert-card" data-category="career" data-price="140" data-rating="4">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/testimonials/5.png') }}" alt="Emma Thompson">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Emma Thompson</h3>
-                        <p class="expert-title">Head of Talent at Uber</p>
-                        <p class="expert-description">Career coaching, interview preparation, salary negotiation</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★☆</span>
-                            <span class="rating-text">73 reviews</span>
-                        </div>
-                        <div class="expert-price">₹140/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>                <!-- Expert 12 -->
-                <div class="expert-card" data-category="startup" data-price="210" data-rating="5">
-                    <div class="expert-avatar">
-                        <img src="{{ url_for('static', filename='images/testimonials/6.png') }}" alt="Robert Kim">
-                    </div>
-                    <div class="expert-info">
-                        <h3>Robert Kim</h3>
-                        <p class="expert-title">Founder of TechCrunch</p>
-                        <p class="expert-description">Media strategy, content creation, startup ecosystem</p>                        <div class="expert-rating">
-                            <span class="rating-stars">★★★★★</span>
-                            <span class="rating-text">118 reviews</span>
-                        </div>
-                        <div class="expert-price">₹210/hour</div>
-                        <button class="expert-book-btn">Book Now</button>
-                    </div>
-                </div>            </div>            <!-- Load More Button -->
+                </div>
+                {% endfor %}
+            </div><!-- Load More Button -->
             <!-- <div class="load-more-section">
                 <button class="btn-primary load-more-btn">Load More Experts</button>
             </div> -->
