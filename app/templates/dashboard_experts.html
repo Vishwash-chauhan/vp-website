@@ -1,0 +1,252 @@
+{% extends "base.html" %}
+
+{% block title %}Expert Management - VyapaarNiti Dashboard{% endblock %}
+
+{% block hero %}
+    <!-- Dashboard Hero Section -->
+    <section class="dashboard-hero">
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="user-details">
+                        <h1 class="user-name">Expert Management</h1>
+                        <p class="user-email">Manage platform experts and their verification status</p>
+                        <span class="user-since">Total Experts: {{ experts.total }}</span>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Dashboard
+                    </a>
+                    <button class="btn btn-primary" onclick="refreshData()">
+                        <i class="fas fa-sync"></i>
+                        Refresh
+                    </button>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-messages">
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Experts Management Content -->
+    <section class="management-content">
+        <div class="container">
+            
+            <!-- Experts Table -->
+            <div class="management-section">
+                <div class="section-header">
+                    <h2 class="section-title">
+                        <i class="fas fa-user-tie"></i>
+                        Platform Experts
+                    </h2>
+                    <div class="section-actions">
+                        <span class="total-count">{{ experts.total }} total experts</span>
+                    </div>
+                </div>
+                
+                <div class="table-responsive">
+                    <table class="data-table">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Expert</th>
+                                <th>Expertise</th>
+                                <th>Contact</th>
+                                <th>Rating</th>
+                                <th>Rate/Hr</th>
+                                <th>Status</th>
+                                <th>Created</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for expert in experts.items %}
+                            <tr>
+                                <td>{{ expert.id }}</td>
+                                <td>
+                                    <div class="expert-profile-cell">
+                                        <div class="expert-avatar-small">
+                                            {% if expert.profile_picture %}
+                                                <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
+                                            {% else %}
+                                                <i class="fas fa-user-tie"></i>
+                                            {% endif %}
+                                        </div>
+                                        <div class="expert-info">
+                                            <strong>{{ expert.name }}</strong>
+                                            {% if expert.is_verified %}
+                                                <span class="verification-badge">✓ Verified</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="expertise-cell">
+                                        {{ expert.expertise[:40] }}{% if expert.expertise|length > 40 %}...{% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="contact-cell">
+                                        {% if expert.contact %}
+                                            <div><i class="fas fa-envelope"></i> {{ expert.contact }}</div>
+                                        {% endif %}
+                                        {% if expert.phone_number %}
+                                            <div><i class="fas fa-phone"></i> {{ expert.phone_number }}</div>
+                                        {% endif %}
+                                        {% if not expert.contact and not expert.phone_number %}
+                                            <span class="text-muted">N/A</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>
+                                    <div class="rating-cell">
+                                        <div class="rating-stars">
+                                            {% for i in range(5) %}
+                                                {% if i < expert.rating|int %}★{% else %}☆{% endif %}
+                                            {% endfor %}
+                                        </div>
+                                        <div class="rating-details">
+                                            {{ expert.rating }} ({{ expert.reviews_count }} reviews)
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>
+                                    {% if expert.hourly_rate %}
+                                        ₹{{ expert.hourly_rate }}
+                                    {% else %}
+                                        <span class="text-muted">Not set</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    <div class="status-cell">
+                                        <span class="status-badge {{ 'available' if expert.is_available else 'unavailable' }}">
+                                            {{ 'Available' if expert.is_available else 'Busy' }}
+                                        </span>
+                                        {% if expert.is_verified %}
+                                            <span class="status-badge verified">Verified</span>
+                                        {% else %}
+                                            <span class="status-badge unverified">Unverified</span>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                                <td>{{ expert.created_at.strftime('%Y-%m-%d') if expert.created_at else 'N/A' }}</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a href="{{ url_for('main.expert_detail', expert_id=expert.id) }}" 
+                                           class="btn-action btn-view" title="View Profile" target="_blank">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        
+                                        <form method="POST" action="{{ url_for('main.toggle_expert_status', expert_id=expert.id) }}" style="display: inline;">
+                                            <button type="submit" class="btn-action btn-toggle" 
+                                                    title="{{ 'Set as Busy' if expert.is_available else 'Set as Available' }}">
+                                                <i class="fas {{ 'fa-pause' if expert.is_available else 'fa-play' }}"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="POST" action="{{ url_for('main.toggle_expert_verification', expert_id=expert.id) }}" style="display: inline;">
+                                            <button type="submit" class="btn-action btn-verify" 
+                                                    title="{{ 'Remove Verification' if expert.is_verified else 'Verify Expert' }}">
+                                                <i class="fas {{ 'fa-check-circle' if not expert.is_verified else 'fa-times-circle' }}"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="POST" action="{{ url_for('main.delete_expert', expert_id=expert.id) }}" 
+                                              style="display: inline;" 
+                                              onsubmit="return confirm('Are you sure you want to delete expert {{ expert.name }}? This action cannot be undone.')">
+                                            <button type="submit" class="btn-action btn-delete" title="Delete Expert">
+                                                <i class="fas fa-trash"></i>
+                                            </button>
+                                        </form>
+                                    </div>
+                                </td>
+                            </tr>
+                            {% else %}
+                            <tr>
+                                <td colspan="9" class="text-center empty-message">No experts found</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                {% if experts.pages > 1 %}
+                <div class="pagination-wrapper">
+                    <div class="pagination">
+                        {% if experts.has_prev %}
+                            <a href="{{ url_for('main.dashboard_experts', page=experts.prev_num) }}" class="page-link">
+                                <i class="fas fa-chevron-left"></i>
+                            </a>
+                        {% endif %}
+                        
+                        {% for page_num in experts.iter_pages() %}
+                            {% if page_num %}
+                                {% if page_num != experts.page %}
+                                    <a href="{{ url_for('main.dashboard_experts', page=page_num) }}" class="page-link">{{ page_num }}</a>
+                                {% else %}
+                                    <span class="page-link current">{{ page_num }}</span>
+                                {% endif %}
+                            {% else %}
+                                <span class="page-link disabled">...</span>
+                            {% endif %}
+                        {% endfor %}
+                        
+                        {% if experts.has_next %}
+                            <a href="{{ url_for('main.dashboard_experts', page=experts.next_num) }}" class="page-link">
+                                <i class="fas fa-chevron-right"></i>
+                            </a>
+                        {% endif %}
+                    </div>
+                    <div class="pagination-info">
+                        Showing {{ (experts.page - 1) * experts.per_page + 1 }} to 
+                        {{ experts.page * experts.per_page if experts.page * experts.per_page < experts.total else experts.total }} 
+                        of {{ experts.total }} experts
+                    </div>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+function refreshData() {
+    location.reload();
+}
+
+// Auto-hide flash messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        setTimeout(function() {
+            alert.style.opacity = '0';
+            setTimeout(function() {
+                alert.remove();
+            }, 300);
+        }, 5000);
+    });
+});
+</script>
+{% endblock %}
