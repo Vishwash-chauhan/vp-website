@@ -68,13 +68,8 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelectorAll('.expert-book-btn').forEach(button => {
         button.addEventListener('click', function(e) {
             e.stopPropagation(); // Prevent triggering the card click
-            const expertCard = this.closest('.expert-card');
-            const expertName = expertCard.querySelector('h3').textContent;
-            const expertPrice = expertCard.querySelector('.expert-price').textContent;
-            
-            // In a real app, this would navigate to booking page or open booking modal
-            alert(`Booking a call with ${expertName} at ${expertPrice}`);
-            // Example: window.location.href = `/book/${expertName.toLowerCase().replace(' ', '-')}`;
+            // The link will handle navigation to the expert detail page
+            // No need for alert popup since this is a "View Profile" button
         });
     });
 
@@ -634,13 +629,8 @@ function initializeExpertsPage() {
     document.querySelectorAll('.expert-book-btn').forEach(button => {
         button.addEventListener('click', function(e) {
             e.stopPropagation(); // Prevent triggering the card click
-            const expertCard = this.closest('.expert-card');
-            const expertName = expertCard.querySelector('h3').textContent;
-            const expertPrice = expertCard.querySelector('.expert-price').textContent;
-            
-            // In a real app, this would navigate to booking page or open booking modal
-            alert(`Booking a call with ${expertName} at ${expertPrice}`);
-            // Example: window.location.href = `/book/${expertName.toLowerCase().replace(' ', '-')}`;
+            // The link will handle navigation to the expert detail page
+            // No need for alert popup since this is a "View Profile" button
         });
     });
 }

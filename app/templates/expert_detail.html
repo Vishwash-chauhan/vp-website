@@ -3,38 +3,66 @@
 {% block title %}{{ expert.name }} - Expert Profile - VyapaarNiti{% endblock %}
 
 {% block hero %}
-    <!-- Expert Profile Hero Section -->
-    <section class="expert-profile-hero">
+    <!-- Expert Detail Hero Section -->
+    <section class="expert-detail-hero">
         <div class="container">
-            <div class="expert-profile-content">
-                <div class="expert-avatar-large">
-                    {% if expert.profile_picture %}
-                        <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
-                    {% else %}
-                        <img src="{{ url_for('static', filename='images/experts/1.png') }}" alt="{{ expert.name }}">
-                    {% endif %}
+            <div class="expert-hero-content">
+                <div class="expert-avatar-section">
+                    <div class="expert-avatar-large">
+                        {% if expert.profile_picture %}
+                            <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/experts/' + (expert.id % 3 + 1)|string + '.png') }}" alt="{{ expert.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="expert-status-badges">
+                        {% if expert.is_verified %}
+                            <div class="status-badge verified">
+                                <i class="fas fa-check-circle"></i>
+                                Verified Expert
+                            </div>
+                        {% endif %}
+                        {% if expert.is_available %}
+                            <div class="status-badge available">
+                                <i class="fas fa-circle"></i>
+                                Available Now
+                            </div>
+                        {% else %}
+                            <div class="status-badge unavailable">
+                                <i class="fas fa-clock"></i>
+                                Currently Busy
+                            </div>
+                        {% endif %}
+                    </div>
                 </div>
-                <div class="expert-info-large">
-                    <h1 class="expert-name">{{ expert.name }}</h1>
-                    <p class="expert-expertise">{{ expert.expertise }}</p>
-                    <div class="expert-rating">
-                        <span class="rating-stars">
+                
+                <div class="expert-info-section">
+                    <h1 class="expert-name-large">{{ expert.name }}</h1>
+                    <p class="expert-expertise-large">{{ expert.expertise }}</p>
+                    
+                    <div class="expert-rating-large">
+                        <div class="rating-stars-large">
                             {% for i in range(5) %}
                                 {% if i < expert.rating|int %}★{% else %}☆{% endif %}
                             {% endfor %}
-                        </span>
-                        <span class="rating-text">{{ expert.rating }}/5 ({{ expert.reviews_count }} reviews)</span>
+                        </div>
+                        <span class="rating-text-large">{{ expert.rating }}/5 ({{ expert.reviews_count }} reviews)</span>
                     </div>
-                    <div class="expert-price-large">₹{{ expert.hourly_rate }}/hour</div>
-                    <div class="expert-status">
-                        {% if expert.is_available %}
-                            <span class="status-available">Available</span>
-                        {% else %}
-                            <span class="status-unavailable">Unavailable</span>
-                        {% endif %}
-                        {% if expert.is_verified %}
-                            <span class="status-verified">Verified Expert</span>
-                        {% endif %}
+                    
+                    <div class="expert-price-section">
+                        <span class="price-label">Consultation Rate</span>
+                        <div class="expert-price-large">₹{{ expert.hourly_rate }}/hour</div>
+                    </div>
+                    
+                    <div class="expert-actions">
+                        <button class="consultation-btn btn-disabled" disabled>
+                            <i class="fas fa-calendar-alt"></i>
+                            Book Consultation
+                        </button>
+                        <button class="contact-btn btn-disabled" disabled>
+                            <i class="fas fa-envelope"></i>
+                            Contact Expert
+                        </button>
                     </div>
                 </div>
             </div>
@@ -43,67 +71,294 @@
 {% endblock %}
 
 {% block main %}
-    <section class="expert-details">
+    <!-- Expert Details Content -->
+    <section class="expert-details-content">
         <div class="container">
-            <div class="expert-detail-grid">
-                <div class="expert-main-content">
-                    {% if expert.about %}
-                    <div class="about-section">
-                        <h2>About</h2>
-                        <p>{{ expert.about }}</p>
+            <div class="expert-detail-layout">
+                <div class="expert-main-info">                    <!-- About Section -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-user"></i>
+                                About {{ expert.name }}
+                            </h2>
+                        </div>
+                        <div class="card-content">
+                            {% if expert.bio %}
+                                <p class="about-text"><strong>Professional Bio:</strong></p>
+                                <p class="bio-text">{{ expert.bio }}</p>
+                            {% endif %}
+                            
+                            {% if expert.about %}
+                                {% if expert.bio %}<br>{% endif %}
+                                <p class="about-text"><strong>Background:</strong></p>
+                                <p class="bio-text">{{ expert.about }}</p>
+                            {% endif %}
+                            
+                            {% if not expert.bio and not expert.about %}
+                                <p class="about-text">No detailed biography available for this expert.</p>
+                            {% endif %}
+                        </div>
                     </div>
-                    {% endif %}
-                    
-                    {% if expert.bio %}
-                    <div class="bio-section">
-                        <h2>Bio</h2>
-                        <p>{{ expert.bio }}</p>
+
+                    <!-- Expertise Section -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-brain"></i>
+                                Areas of Expertise
+                            </h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="expertise-tags">
+                                {% set expertise_areas = expert.expertise.split(',') if expert.expertise else [expert.expertise] %}
+                                {% for area in expertise_areas %}
+                                    {% if loop.first %}
+                                        <span class="expertise-tag primary">{{ area.strip() }}</span>
+                                    {% else %}
+                                        <span class="expertise-tag">{{ area.strip() }}</span>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                        </div>
                     </div>
-                    {% endif %}
+
+                    <!-- Reviews Section -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-star"></i>
+                                Client Reviews
+                            </h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="reviews-summary">
+                                <div class="rating-overview">
+                                    <div class="average-rating">
+                                        <span class="rating-number">{{ expert.rating }}</span>
+                                        <div>
+                                            <div class="rating-stars-large">
+                                                {% for i in range(5) %}
+                                                    {% if i < expert.rating|int %}★{% else %}☆{% endif %}
+                                                {% endfor %}
+                                            </div>
+                                            <p class="rating-summary">Based on {{ expert.reviews_count }} reviews</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="reviews-list">
+                                <!-- Sample Reviews -->
+                                {% for i in range(3) %}
+                                <div class="review-item">
+                                    <div class="review-header">
+                                        <div class="reviewer-avatar">
+                                            <i class="fas fa-user"></i>
+                                        </div>
+                                        <div class="reviewer-info">
+                                            <h4>Client {{ i + 1 }}</h4>
+                                            <div class="review-rating">
+                                                <span class="stars">★★★★★</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <p class="review-text">"Excellent consultation and very professional approach. Highly recommended!"</p>
+                                </div>
+                                {% endfor %}
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                
-                <div class="expert-sidebar">
-                    <div class="contact-info">
-                        <h3>Contact Information</h3>
-                        {% if expert.contact %}
-                            <p><strong>Contact:</strong> {{ expert.contact }}</p>
-                        {% endif %}
-                        {% if expert.phone_number %}
-                            <p><strong>Phone:</strong> {{ expert.phone_number }}</p>
-                        {% endif %}
+
+                <div class="expert-sidebar-info">                    <!-- Contact Information -->
+                    <div class="sidebar-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-address-card"></i>
+                                Contact Information
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            {% if expert.contact %}
+                            <div class="contact-item">
+                                <i class="fas fa-envelope"></i>
+                                <span>{{ expert.contact }}</span>
+                            </div>
+                            {% endif %}
+                            {% if expert.phone_number %}
+                            <div class="contact-item">
+                                <i class="fas fa-phone"></i>
+                                <span>{{ expert.phone_number }}</span>
+                            </div>
+                            {% endif %}
+                            <div class="contact-item">
+                                <i class="fas fa-map-marker-alt"></i>
+                                <span>{{ "India" if expert.is_available else "Location not specified" }}</span>
+                            </div>
+                            {% if expert.hourly_rate %}
+                            <div class="contact-item">
+                                <i class="fas fa-rupee-sign"></i>
+                                <span>₹{{ expert.hourly_rate }}/hour consultation</span>
+                            </div>
+                            {% endif %}
+                        </div>
                     </div>
-                    
-                    <div class="social-links">
-                        <h3>Social Profiles</h3>
-                        {% if expert.linkedin_profile %}
-                            <a href="{{ expert.linkedin_profile }}" target="_blank" class="social-link">
-                                <i class="fab fa-linkedin"></i> LinkedIn
-                            </a>
-                        {% endif %}
-                        {% if expert.instagram_profile %}
-                            <a href="{{ expert.instagram_profile }}" target="_blank" class="social-link">
-                                <i class="fab fa-instagram"></i> Instagram
-                            </a>
-                        {% endif %}
-                        {% if expert.twitter_profile %}
-                            <a href="{{ expert.twitter_profile }}" target="_blank" class="social-link">
-                                <i class="fab fa-twitter"></i> Twitter
-                            </a>
-                        {% endif %}
-                        {% if expert.portfolio_link %}
-                            <a href="{{ expert.portfolio_link }}" target="_blank" class="social-link">
-                                <i class="fas fa-globe"></i> Portfolio
-                            </a>
-                        {% endif %}
+
+                    <!-- Social Links -->
+                    <div class="sidebar-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-share-alt"></i>
+                                Social Links & Portfolio
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="social-links-grid">
+                                {% if expert.linkedin_profile %}
+                                <a href="{{ expert.linkedin_profile }}" target="_blank" class="social-link linkedin">
+                                    <i class="fab fa-linkedin"></i>
+                                    LinkedIn
+                                </a>
+                                {% else %}
+                                <div class="social-link linkedin disabled">
+                                    <i class="fab fa-linkedin"></i>
+                                    LinkedIn
+                                </div>
+                                {% endif %}
+                                
+                                {% if expert.twitter_profile %}
+                                <a href="{{ expert.twitter_profile }}" target="_blank" class="social-link twitter">
+                                    <i class="fab fa-twitter"></i>
+                                    Twitter
+                                </a>
+                                {% else %}
+                                <div class="social-link twitter disabled">
+                                    <i class="fab fa-twitter"></i>
+                                    Twitter
+                                </div>
+                                {% endif %}
+                                
+                                {% if expert.portfolio_link %}
+                                <a href="{{ expert.portfolio_link }}" target="_blank" class="social-link portfolio">
+                                    <i class="fas fa-globe"></i>
+                                    Portfolio
+                                </a>
+                                {% else %}
+                                <div class="social-link portfolio disabled">
+                                    <i class="fas fa-globe"></i>
+                                    Portfolio
+                                </div>
+                                {% endif %}
+                                
+                                {% if expert.instagram_profile %}
+                                <a href="{{ expert.instagram_profile }}" target="_blank" class="social-link instagram">
+                                    <i class="fab fa-instagram"></i>
+                                    Instagram
+                                </a>
+                                {% else %}
+                                <div class="social-link instagram disabled">
+                                    <i class="fab fa-instagram"></i>
+                                    Instagram
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>                    <!-- Quick Stats -->
+                    <div class="sidebar-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-chart-bar"></i>
+                                Quick Stats
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="stats-grid">
+                                <div class="stat-item">
+                                    <div class="stat-number">{{ expert.reviews_count or 0 }}</div>
+                                    <div class="stat-label">Reviews</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">{{ expert.rating or 5.0 }}/5</div>
+                                    <div class="stat-label">Rating</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">{{ "✓" if expert.is_verified else "✗" }}</div>
+                                    <div class="stat-label">Verified</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-number">{{ "✓" if expert.is_available else "✗" }}</div>
+                                    <div class="stat-label">Available</div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
-                    
-                    {% if expert.is_available %}
-                    <div class="booking-section">
-                        <button class="btn-primary book-consultation-btn">Book Consultation</button>
+
+                    <!-- Booking Card -->
+                    <div class="sidebar-card booking-card">
+                        <div class="card-header">
+                            <h3 class="card-title">
+                                <i class="fas fa-calendar-check"></i>
+                                Book Consultation
+                            </h3>
+                        </div>
+                        <div class="card-content">
+                            <div class="booking-info">
+                                <div class="price-highlight">
+                                    <div class="price">₹{{ expert.hourly_rate }}</div>
+                                    <div class="duration">per hour</div>
+                                </div>
+                                <p class="booking-description">Get expert consultation and guidance for your business needs.</p>
+                                <button class="book-now-btn" disabled>
+                                    <i class="fas fa-calendar-alt"></i>
+                                    Book Now
+                                </button>
+                                <p class="booking-note">
+                                    <i class="fas fa-info-circle"></i>
+                                    Booking functionality coming soon
+                                </p>
+                            </div>
+                        </div>
                     </div>
-                    {% endif %}
                 </div>
             </div>
         </div>
     </section>
+
+    <!-- Related Experts Section -->
+    {% if related_experts %}
+    <section class="related-experts">
+        <div class="container">
+            <h2 class="section-title">Related Experts</h2>
+            <div class="related-experts-grid">
+                {% for related_expert in related_experts %}
+                <div class="expert-card">
+                    <div class="expert-avatar">
+                        {% if related_expert.profile_picture %}
+                            <img src="data:image/jpeg;base64,{{ related_expert.profile_picture|b64encode }}" alt="{{ related_expert.name }}">
+                        {% else %}
+                            <img src="{{ url_for('static', filename='images/experts/' + (related_expert.id % 3 + 1)|string + '.png') }}" alt="{{ related_expert.name }}">
+                        {% endif %}
+                    </div>
+                    <div class="expert-info">
+                        <h3>{{ related_expert.name }}</h3>
+                        <p class="expert-title">{{ related_expert.expertise }}</p>
+                        <p class="expert-description">{{ related_expert.bio[:100] + '...' if related_expert.bio and related_expert.bio|length > 100 else related_expert.bio or 'Professional expertise in ' + related_expert.expertise }}</p>
+                        <div class="expert-rating">
+                            <span class="rating-stars">
+                                {% for i in range(5) %}
+                                    {% if i < related_expert.rating|int %}★{% else %}☆{% endif %}
+                                {% endfor %}
+                            </span>
+                            <span class="rating-text">{{ related_expert.reviews_count }} reviews</span>
+                        </div>
+                        <div class="expert-price">₹{{ related_expert.hourly_rate }}/hour</div>
+                        <a href="{{ url_for('main.expert_detail', expert_id=related_expert.id) }}" class="expert-book-btn">View Profile</a>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </section>
+    {% endif %}
 {% endblock %}

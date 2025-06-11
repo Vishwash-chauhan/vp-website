@@ -7,52 +7,82 @@
     <!-- Sign Up Section -->
     <section class="signup-section">
         <div class="signup-container">
-            <div class="signup-form-wrapper">
-                <div class="signup-header">
+            <div class="signup-form-wrapper">                <div class="signup-header">
                     <h1>Join VyapaarNiti</h1>
                     <p>Create your account and start connecting with top experts</p>
                 </div>
                 
-                <form class="signup-form" method="POST">
-                    <div class="form-row">
-                        <div class="form-group">
-                            <label for="firstName">First Name</label>
-                            <input type="text" id="firstName" name="firstName" placeholder="Enter your first name" required>
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
                         </div>
-                        <div class="form-group">
-                            <label for="lastName">Last Name</label>
-                            <input type="text" id="lastName" name="lastName" placeholder="Enter your last name" required>
-                        </div>                    </div>
+                    {% endif %}
+                {% endwith %}
+                  <form class="signup-form" method="POST">
+                    {{ form.hidden_tag() }}
                     
                     <div class="form-group">
-                        <label for="contactNumber">Contact Number</label>
-                        <input type="tel" id="contactNumber" name="contactNumber" placeholder="Enter your phone number" required>
+                        <label for="name">Full Name</label>
+                        {{ form.name(class="form-control", placeholder="Enter your full name") }}
+                        {% if form.name.errors %}
+                            <div class="error-messages">
+                                {% for error in form.name.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="contact">Contact Number</label>
+                        {{ form.contact(class="form-control", placeholder="Enter your phone number") }}
+                        {% if form.contact.errors %}
+                            <div class="error-messages">
+                                {% for error in form.contact.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="form-group">
                         <label for="email">Email Address</label>
-                        <input type="email" id="email" name="email" placeholder="Enter your email address" required>
+                        {{ form.email(class="form-control", placeholder="Enter your email address") }}
+                        {% if form.email.errors %}
+                            <div class="error-messages">
+                                {% for error in form.email.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Create a secure password" required>
+                        {{ form.password(class="form-control", placeholder="Create a secure password") }}
+                        {% if form.password.errors %}
+                            <div class="error-messages">
+                                {% for error in form.password.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="form-group">
-                        <label for="confirmPassword">Confirm Password</label>
-                        <input type="password" id="confirmPassword" name="confirmPassword" placeholder="Confirm your password" required>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label for="accountType">I am looking to:</label>
-                        <select id="accountType" name="accountType" required>
-                            <option value="">Select an option</option>
-                            <option value="find-expert">Find an expert</option>
-                            <option value="become-expert">Become an expert</option>
-                        </select>
-                    </div>
-                    
+                        <label for="confirm_password">Confirm Password</label>
+                        {{ form.confirm_password(class="form-control", placeholder="Confirm your password") }}
+                        {% if form.confirm_password.errors %}
+                            <div class="error-messages">
+                                {% for error in form.confirm_password.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>                    
                     <div class="form-options">
                         <div class="agreement">
                             <input type="checkbox" id="terms" name="terms" required>
@@ -63,7 +93,7 @@
                             <label for="newsletter">Send me updates and expert recommendations</label>
                         </div>
                     </div>
-                      <button type="submit" class="btn-signup-submit">Create Account</button>
+                      {{ form.submit(class="btn-signup-submit") }}
                 </form>
                 
                 <div class="signup-footer">

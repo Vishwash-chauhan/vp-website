@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, request, jsonify
+from flask import Blueprint, render_template, request, jsonify, abort
 from app.models import Expert
 
 main = Blueprint('main', __name__)
@@ -22,8 +22,24 @@ def experts():
 
 @main.route('/expert/<int:expert_id>')
 def expert_detail(expert_id):
+    """Expert detail page"""
     expert = Expert.query.get_or_404(expert_id)
-    return render_template('expert_detail.html', active_page='experts', expert=expert)
+    
+    # Get related experts (same expertise area, excluding current expert)
+    related_experts = Expert.query.filter(
+        Expert.expertise.contains(expert.expertise.split()[0]),  # First word of expertise
+        Expert.id != expert_id,
+        Expert.is_available == True
+    ).limit(3).all()
+    
+    # If no related experts, get random available experts
+    if not related_experts:
+        related_experts = Expert.query.filter(
+            Expert.id != expert_id,
+            Expert.is_available == True
+        ).limit(3).all()
+    
+    return render_template('expert_detail.html', active_page='experts', expert=expert, related_experts=related_experts)
 
 @main.route('/api/experts/search')
 def search_experts():

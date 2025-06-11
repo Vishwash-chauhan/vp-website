@@ -529,6 +529,18 @@ body {
     transform: translateY(-2px);
 }
 
+.expert-book-btn:disabled {
+    background: #6c757d;
+    color: #adb5bd;
+    cursor: not-allowed;
+    transform: none;
+}
+
+.expert-book-btn:disabled:hover {
+    background: #6c757d;
+    transform: none;
+}
+
 .view-all-experts {
     text-align: center;
 }
@@ -2289,8 +2301,7 @@ html {
     .club-cta {
         padding: 40px 0;
     }
-    
-    .events-image .image-placeholder {
+      .events-image .image-placeholder {
         width: 250px;
         height: 200px;
     }
@@ -2300,13 +2311,715 @@ html {
     }
 }
 
-/* Consider standardizing spacing across sections */
-.section-spacing {
-  padding: 80px 0; /* Desktop */
+/* Expert Detail Page Styles */
+
+/* Expert Detail Hero Section */
+.expert-detail-hero {
+    background: linear-gradient(135deg, #f8f9ff 0%, #ffffff 100%);
+    padding: 140px 0 80px;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.expert-hero-content {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    gap: 40px;
+    align-items: center;
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.expert-avatar-section {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.expert-avatar-large {
+    width: 180px;
+    height: 180px;
+    border-radius: 50%;
+    overflow: hidden;
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
+    border: 4px solid white;
+}
+
+.expert-avatar-large img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.expert-status-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.status-badge.verified {
+    background: linear-gradient(135deg, #28a745, #20c997);
+    color: white;
+}
+
+.status-badge.available {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.status-badge.unavailable {
+    background: linear-gradient(135deg, #dc3545, #c82333);
+    color: white;
+}
+
+.expert-info-section {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.expert-name-large {
+    font-size: 3rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin: 0;
+    line-height: 1.1;
+}
+
+.expert-expertise-large {
+    font-size: 1.5rem;
+    color: #007bff;
+    font-weight: 600;
+    margin: 0;
+}
+
+.expert-rating-large {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rating-stars-large {
+    font-size: 1.5rem;
+    color: #ffc107;
+}
+
+.rating-text-large {
+    font-size: 1rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.expert-price-section {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.price-label {
+    font-size: 0.9rem;
+    color: #666;
+    font-weight: 500;
+}
+
+.expert-price-large {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.expert-actions {
+    display: flex;
+    gap: 16px;
+    margin-top: 10px;
+}
+
+.consultation-btn, .contact-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 24px;
+    border-radius: 50px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: none;
+    cursor: pointer;
+}
+
+.consultation-btn {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.consultation-btn:hover:not(:disabled) {
+    background: linear-gradient(135deg, #0056b3, #004085);
+    transform: translateY(-2px);
+}
+
+.contact-btn {
+    background: transparent;
+    color: #007bff;
+    border: 2px solid #007bff;
+}
+
+.contact-btn:hover:not(:disabled) {
+    background: #007bff;
+    color: white;
+    transform: translateY(-2px);
+}
+
+.btn-disabled {
+    background: #6c757d !important;
+    color: #adb5bd !important;
+    border-color: #6c757d !important;
+    cursor: not-allowed !important;
+    opacity: 0.6;
+}
+
+.btn-disabled:hover {
+    transform: none !important;
+    background: #6c757d !important;
+}
+
+/* Expert Details Content */
+.expert-details-content {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.expert-detail-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 40px;
+    align-items: start;
+}
+
+.expert-main-info {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+}
+
+.expert-sidebar-info {
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+    position: sticky;
+    top: 100px;
+}
+
+/* Card Styles */
+.info-card, .sidebar-card {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+    overflow: hidden;
+    border: 1px solid #f0f0f0;
+    transition: all 0.3s ease;
+}
+
+.info-card:hover, .sidebar-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.12);
+}
+
+.card-header {
+    padding: 24px 30px 0;
+    border-bottom: 1px solid #f0f0f0;
+    margin-bottom: 0;
+}
+
+.card-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    color: #1a1a1a;
+    margin: 0 0 24px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.card-title i {
+    color: #007bff;
+    font-size: 1.2rem;
+}
+
+.card-content {
+    padding: 0 30px 30px;
+}
+
+.about-text, .bio-text {
+    font-size: 1.1rem;
+    line-height: 1.7;
+    color: #555;
+    margin: 0;
+}
+
+/* Expertise Tags */
+.expertise-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.expertise-tag {
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    background: #f8f9fa;
+    color: #495057;
+    border: 1px solid #e9ecef;
+}
+
+.expertise-tag.primary {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+    border: none;
+}
+
+/* Reviews Section */
+.reviews-summary {
+    margin-bottom: 30px;
+}
+
+.rating-overview {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    padding: 20px;
+    background: #f8f9ff;
+    border-radius: 12px;
+    border: 1px solid #e6f3ff;
+}
+
+.average-rating {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.rating-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #007bff;
+}
+
+.rating-summary {
+    font-size: 1rem;
+    color: #666;
+    margin: 0;
+}
+
+.reviews-list {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review-item {
+    padding: 20px;
+    background: #f8f9fa;
+    border-radius: 12px;
+    border: 1px solid #e9ecef;
+}
+
+.review-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+
+.reviewer-avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #007bff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 1.2rem;
+}
+
+.reviewer-info h4 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #1a1a1a;
+}
+
+.review-rating .stars {
+    color: #ffc107;
+    font-size: 0.9rem;
+}
+
+.review-text {
+    margin: 0;
+    font-size: 1rem;
+    line-height: 1.6;
+    color: #555;
+    font-style: italic;
+}
+
+/* Sidebar Cards */
+.sidebar-card .card-header {
+    padding: 20px 24px 0;
+}
+
+.sidebar-card .card-title {
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+}
+
+.sidebar-card .card-content {
+    padding: 0 24px 24px;
+}
+
+/* Contact Information */
+.contact-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.contact-item:last-child {
+    border-bottom: none;
+}
+
+.contact-item i {
+    width: 20px;
+    color: #007bff;
+    font-size: 1rem;
+}
+
+.contact-item span {
+    font-size: 0.95rem;
+    color: #555;
+}
+
+/* Social Links */
+.social-links-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+.social-link {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    border: 1px solid #e9ecef;
+    color: #495057;
+}
+
+.social-link:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.social-link.linkedin {
+    background: #f8f9ff;
+    border-color: #0077b5;
+}
+
+.social-link.linkedin:hover {
+    background: #0077b5;
+    color: white;
+}
+
+.social-link.instagram {
+    background: #fef7f0;
+    border-color: #e4405f;
+}
+
+.social-link.instagram:hover {
+    background: #e4405f;
+    color: white;
+}
+
+.social-link.twitter {
+    background: #f0f8ff;
+    border-color: #1da1f2;
+}
+
+.social-link.twitter:hover {
+    background: #1da1f2;
+    color: white;
+}
+
+.social-link.portfolio {
+    background: #f8f9fa;
+    border-color: #6c757d;
+}
+
+.social-link.portfolio:hover {
+    background: #6c757d;
+    color: white;
+}
+
+.social-link.disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    pointer-events: none;
+}
+
+.social-link.disabled:hover {
+    transform: none;
+    box-shadow: none;
+}
+
+/* Quick Stats */
+.stats-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.stat-item {
+    text-align: center;
+    padding: 16px;
+    background: #f8f9ff;
+    border-radius: 10px;
+    border: 1px solid #e6f3ff;
+}
+
+.stat-number {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #007bff;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    color: #666;
+    font-weight: 500;
+}
+
+/* Booking Card */
+.booking-card {
+    background: linear-gradient(135deg, #007bff, #0056b3);
+    color: white;
+}
+
+.booking-card .card-header {
+    border-bottom-color: rgba(255, 255, 255, 0.2);
+}
+
+.booking-card .card-title {
+    color: white;
+}
+
+.booking-card .card-title i {
+    color: white;
+}
+
+.booking-info {
+    text-align: center;
+}
+
+.price-highlight {
+    margin-bottom: 16px;
+}
+
+.price-highlight .price {
+    font-size: 2rem;
+    font-weight: 700;
+    color: white;
+}
+
+.price-highlight .duration {
+    font-size: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+}
+
+.booking-description {
+    color: rgba(255, 255, 255, 0.9);
+    line-height: 1.6;
+    margin-bottom: 20px;
+}
+
+.book-now-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    width: 100%;
+    background: white;
+    color: #007bff;
+    padding: 14px 24px;
+    margin-bottom: 12px;
+    font-weight: 600;
+    border: none;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.book-now-btn:hover:not(:disabled) {
+    background: #f8f9fa;
+    transform: translateY(-2px);
+}
+
+.book-now-btn:disabled {
+    background: #6c757d;
+    color: #adb5bd;
+    cursor: not-allowed;
+    opacity: 0.7;
+}
+
+.book-now-btn:disabled:hover {
+    transform: none;
+    background: #6c757d;
+}
+
+.booking-note {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+}
+
+/* Related Experts Section */
+.related-experts {
+    padding: 80px 0;
+    background: white;
+}
+
+.related-experts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    margin-top: 40px;
+}
+
+/* Responsive Design for Expert Detail Page */
+@media (max-width: 1024px) {
+    .expert-detail-layout {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+    
+    .expert-sidebar-info {
+        position: static;
+        order: -1;
+    }
+    
+    .expert-hero-content {
+        grid-template-columns: 1fr;
+        text-align: center;
+        gap: 30px;
+    }
+    
+    .expert-avatar-section {
+        order: -1;
+    }
+
 }
 
 @media (max-width: 768px) {
-  .section-spacing {
-    padding: 60px 0; /* Mobile */
-  }
+    .expert-detail-hero {
+        padding: 120px 0 60px;
+    }
+    
+    .expert-name-large {
+        font-size: 2.2rem;
+    }
+    
+    .expert-expertise-large {
+        font-size: 1.2rem;
+    }
+    
+    .expert-actions {
+        flex-direction: column;
+    }
+    
+    .consultation-btn, .contact-btn {
+        justify-content: center;
+        width: 100%;
+    }
+    
+    .expert-details-content {
+        padding: 60px 0;
+    }
+    
+    .info-card, .sidebar-card {
+        border-radius: 12px;
+    }
+    
+    .card-header, .card-content {
+        padding-left: 20px;
+        padding-right: 20px;
+    }
+    
+    .social-links-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .stats-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 12px;
+    }
+    
+    .stat-item {
+        padding: 12px 8px;
+    }
+    
+    .stat-number {
+        font-size: 1.2rem;
+    }
+    
+    .related-experts-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
+    }
 }
+
+@media (max-width: 480px) {
+    .expert-avatar-large {
+        width: 140px;
+        height: 140px;
+    }
+    
+    .expert-name-large {
+        font-size: 1.8rem;
+    }
+    
+    .expert-price-large {
+        font-size: 1.6rem;
+    }
+    
+    .card-title {
+        font-size: 1.2rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+

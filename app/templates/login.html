@@ -7,30 +7,56 @@
     <!-- Login Section -->
     <section class="login-section">
         <div class="login-container">
-            <div class="login-form-wrapper">
-                <div class="login-header">
+            <div class="login-form-wrapper">                <div class="login-header">
                     <h1>Welcome Back</h1>
                     <p>Sign in to your VyapaarNiti account</p>
                 </div>
+                
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        <div class="flash-messages">
+                            {% for category, message in messages %}
+                                <div class="alert alert-{{ category }}">{{ message }}</div>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+                {% endwith %}
+                
                   <form class="login-form" method="POST">
+                    {{ form.hidden_tag() }}
+                    
                     <div class="form-group">
                         <label for="contact">Contact Number</label>
-                        <input type="tel" id="contact" name="contact" placeholder="Enter your contact number" required>
+                        {{ form.contact(class="form-control", placeholder="Enter your contact number") }}
+                        {% if form.contact.errors %}
+                            <div class="error-messages">
+                                {% for error in form.contact.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" placeholder="Enter your password" required>
+                        {{ form.password(class="form-control", placeholder="Enter your password") }}
+                        {% if form.password.errors %}
+                            <div class="error-messages">
+                                {% for error in form.password.errors %}
+                                    <span class="error">{{ error }}</span>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
                     </div>
                     
                     <div class="form-options">
                         <div class="remember-me">
-                            <input type="checkbox" id="remember" name="remember">
+                            {{ form.remember(class="form-check-input") }}
                             <label for="remember">Remember me</label>
                         </div>
                         <a href="#" class="forgot-password">Forgot password?</a>
                     </div>
-                      <button type="submit" class="btn-login">Sign In</button>
+                      {{ form.submit(class="btn-login") }}
                 </form>
                 
                 <div class="login-footer">
