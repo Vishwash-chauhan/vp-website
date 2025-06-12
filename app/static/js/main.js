@@ -561,16 +561,16 @@ function initializeExpertsPage() {
 
                 switch (selectedPriceRange) {
                     case '0-100':
-                        priceInRange = cardPrice <= 100;
+                        priceInRange = cardPrice >= 499 && cardPrice <= 1000;
                         break;
                     case '100-200':
-                        priceInRange = cardPrice > 100 && cardPrice <= 200;
+                        priceInRange = cardPrice > 1000 && cardPrice <= 2999;
                         break;
                     case '200-300':
-                        priceInRange = cardPrice > 200 && cardPrice <= 300;
+                        priceInRange = cardPrice > 2999 && cardPrice <= 5000;
                         break;
                     case '300+':
-                        priceInRange = cardPrice > 300;
+                        priceInRange = cardPrice > 5000;
                         break;
                 }
 
