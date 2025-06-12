@@ -169,9 +169,9 @@
                             </div>
                         </div>
                     </div>
-                </div>
-
-                <div class="expert-sidebar-info">                    <!-- Contact Information -->
+                </div>                <div class="expert-sidebar-info">
+                    <!-- Contact Information -->
+                    <!--
                     <div class="sidebar-card">
                         <div class="card-header">
                             <h3 class="card-title">
@@ -204,6 +204,7 @@
                             {% endif %}
                         </div>
                     </div>
+                    -->
 
                     <!-- Social Links -->
                     <div class="sidebar-card">
@@ -229,8 +230,8 @@
                                 
                                 {% if expert.twitter_profile %}
                                 <a href="{{ expert.twitter_profile }}" target="_blank" class="social-link twitter">
-                                    <i class="fab fa-twitter"></i>
-                                    Twitter
+                                    <i class="fab x"></i>
+                                    X
                                 </a>
                                 {% else %}
                                 <div class="social-link twitter disabled">
@@ -321,44 +322,6 @@
                         </div>
                     </div>
                 </div>
-            </div>
-        </div>
+            </div>        </div>
     </section>
-
-    <!-- Related Experts Section -->
-    {% if related_experts %}
-    <section class="related-experts">
-        <div class="container">
-            <h2 class="section-title">Related Experts</h2>
-            <div class="related-experts-grid">
-                {% for related_expert in related_experts %}
-                <div class="expert-card">
-                    <div class="expert-avatar">
-                        {% if related_expert.profile_picture %}
-                            <img src="data:image/jpeg;base64,{{ related_expert.profile_picture|b64encode }}" alt="{{ related_expert.name }}">
-                        {% else %}
-                            <img src="{{ url_for('static', filename='images/experts/' + (related_expert.id % 3 + 1)|string + '.png') }}" alt="{{ related_expert.name }}">
-                        {% endif %}
-                    </div>
-                    <div class="expert-info">
-                        <h3>{{ related_expert.name }}</h3>
-                        <p class="expert-title">{{ related_expert.expertise }}</p>
-                        <p class="expert-description">{{ related_expert.bio[:100] + '...' if related_expert.bio and related_expert.bio|length > 100 else related_expert.bio or 'Professional expertise in ' + related_expert.expertise }}</p>
-                        <div class="expert-rating">
-                            <span class="rating-stars">
-                                {% for i in range(5) %}
-                                    {% if i < related_expert.rating|int %}★{% else %}☆{% endif %}
-                                {% endfor %}
-                            </span>
-                            <span class="rating-text">{{ related_expert.reviews_count }} reviews</span>
-                        </div>
-                        <div class="expert-price">₹{{ related_expert.hourly_rate }}/hour</div>
-                        <a href="{{ url_for('main.expert_detail', expert_id=related_expert.id) }}" class="expert-book-btn">View Profile</a>
-                    </div>
-                </div>
-                {% endfor %}
-            </div>
-        </div>
-    </section>
-    {% endif %}
 {% endblock %}
