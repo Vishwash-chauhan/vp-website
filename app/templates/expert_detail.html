@@ -38,14 +38,13 @@
                 
                 <div class="expert-info-section">
                     <h1 class="expert-name-large">{{ expert.name }}</h1>
-                    <p class="expert-expertise-large">{{ expert.expertise }}</p>
-                      <div class="expert-rating-large">
+                    <p class="expert-expertise-large">{{ expert.expertise }}</p>                      <div class="expert-rating-large">
                         <div class="rating-stars-large">
                             {% for i in range(5) %}
                                 {% if i < expert.rating|int %}★{% else %}☆{% endif %}
                             {% endfor %}
                         </div>
-                        <span class="rating-text-large">{{ expert.rating }}/5</span>
+                        <span class="rating-text-large">{{ expert.rating|float|round(1) }}/5</span>
                     </div>
                     
                     <div class="expert-price-section">
