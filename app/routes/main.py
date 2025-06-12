@@ -3,6 +3,8 @@ from flask_login import login_required, current_user
 from functools import wraps
 from app.models import Expert, User
 from app import db
+from app.forms.expert import ExpertForm
+import base64
 
 main = Blueprint('main', __name__)
 
@@ -189,3 +191,85 @@ def toggle_user_admin(user_id):
         db.session.rollback()
         flash(f'Error updating user admin status: {str(e)}', 'error')
     return redirect(url_for('main.dashboard_users'))
+
+@main.route('/dashboard/expert/add', methods=['GET', 'POST'])
+@admin_required
+def add_expert():
+    """Add new expert"""
+    form = ExpertForm()
+    if form.validate_on_submit():
+        try:
+            # Handle profile picture upload
+            profile_picture_data = None
+            if form.profile_picture.data:
+                profile_picture_data = form.profile_picture.data.read()
+            
+            # Create new expert
+            expert = Expert(
+                name=form.name.data,
+                expertise=form.expertise.data,
+                bio=form.bio.data,
+                about=form.about.data,
+                contact=form.contact.data,
+                phone_number=form.phone_number.data,
+                portfolio_link=form.portfolio_link.data,
+                linkedin_profile=form.linkedin_profile.data,
+                twitter_profile=form.twitter_profile.data,
+                instagram_profile=form.instagram_profile.data,
+                hourly_rate=form.hourly_rate.data or 0.00,
+                rating=form.rating.data or 5.00,
+                reviews_count=form.reviews_count.data or 0,
+                is_available=form.is_available.data,
+                is_verified=form.is_verified.data,
+                profile_picture=profile_picture_data
+            )
+            
+            db.session.add(expert)
+            db.session.commit()
+            flash(f'Expert {expert.name} has been added successfully!', 'success')
+            return redirect(url_for('main.dashboard_experts'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error adding expert: {str(e)}', 'error')
+    
+    return render_template('expert_form.html', form=form, title='Add New Expert', action='Add')
+
+@main.route('/dashboard/expert/<int:expert_id>/edit', methods=['GET', 'POST'])
+@admin_required
+def edit_expert(expert_id):
+    """Edit expert profile"""
+    expert = Expert.query.get_or_404(expert_id)
+    form = ExpertForm(obj=expert)
+    
+    if form.validate_on_submit():
+        try:
+            # Update expert fields
+            expert.name = form.name.data
+            expert.expertise = form.expertise.data
+            expert.bio = form.bio.data
+            expert.about = form.about.data
+            expert.contact = form.contact.data
+            expert.phone_number = form.phone_number.data
+            expert.portfolio_link = form.portfolio_link.data
+            expert.linkedin_profile = form.linkedin_profile.data
+            expert.twitter_profile = form.twitter_profile.data
+            expert.instagram_profile = form.instagram_profile.data
+            expert.hourly_rate = form.hourly_rate.data or 0.00
+            expert.rating = form.rating.data or 5.00
+            expert.reviews_count = form.reviews_count.data or 0
+            expert.is_available = form.is_available.data
+            expert.is_verified = form.is_verified.data
+              # Handle profile picture upload
+            if form.profile_picture.data and hasattr(form.profile_picture.data, 'read'):
+                expert.profile_picture = form.profile_picture.data.read()
+            
+            db.session.commit()
+            flash(f'Expert {expert.name} has been updated successfully!', 'success')
+            return redirect(url_for('main.dashboard_experts'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating expert: {str(e)}', 'error')
+    
+    return render_template('expert_form.html', form=form, expert=expert, title='Edit Expert', action='Update')

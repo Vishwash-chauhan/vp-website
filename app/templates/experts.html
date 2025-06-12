@@ -99,7 +99,7 @@
                                     {% if i < expert.rating|int %}★{% else %}☆{% endif %}
                                 {% endfor %}
                             </span>
-                            <span class="rating-text">{{ expert.reviews_count }} reviews</span>                        </div>                        <div class="expert-price">₹{{ expert.hourly_rate }}/hour</div>
+                         <!--   <span class="rating-text">{{ expert.reviews_count }} reviews</span>  -->                      </div>                        <div class="expert-price">₹{{ expert.hourly_rate }}/hour</div>
                         <a href="{{ url_for('main.expert_detail', expert_id=expert.id) }}" class="expert-book-btn">View Profile</a>
                     </div>
                 </div>

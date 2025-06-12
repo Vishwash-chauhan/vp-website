@@ -1,0 +1,310 @@
+{% extends "base.html" %}
+
+{% block title %}{{ title }} - VyapaarNiti Dashboard{% endblock %}
+
+{% block hero %}
+    <!-- Dashboard Hero Section -->
+    <section class="dashboard-hero">
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-user-tie"></i>
+                    </div>
+                    <div class="user-details">
+                        <h1 class="user-name">{{ title }}</h1>
+                        <p class="user-email">{{ "Edit expert profile details" if expert else "Add a new expert to the platform" }}</p>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <a href="{{ url_for('main.dashboard_experts') }}" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Experts
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-messages">
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Expert Form Content -->
+    <section class="form-content">
+        <div class="container">
+            <div class="form-wrapper">
+                <form method="POST" enctype="multipart/form-data" class="expert-form">
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="form-sections">
+                        <!-- Basic Information -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-user"></i>
+                                Basic Information
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    {{ form.name.label(class="form-label") }}
+                                    {{ form.name(class="form-control" + (" is-invalid" if form.name.errors else "")) }}
+                                    {% if form.name.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.name.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.expertise.label(class="form-label") }}
+                                    {{ form.expertise(class="form-control" + (" is-invalid" if form.expertise.errors else "")) }}
+                                    {% if form.expertise.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.expertise.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            
+                            <div class="form-group">
+                                {{ form.bio.label(class="form-label") }}
+                                {{ form.bio(class="form-control textarea" + (" is-invalid" if form.bio.errors else ""), rows="4") }}
+                                {% if form.bio.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.bio.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                            
+                            <div class="form-group">
+                                {{ form.about.label(class="form-label") }}
+                                {{ form.about(class="form-control textarea" + (" is-invalid" if form.about.errors else ""), rows="4") }}
+                                {% if form.about.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.about.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                        <!-- Contact Information -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-address-book"></i>
+                                Contact Information
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    {{ form.contact.label(class="form-label") }}
+                                    {{ form.contact(class="form-control" + (" is-invalid" if form.contact.errors else "")) }}
+                                    {% if form.contact.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.contact.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.phone_number.label(class="form-label") }}
+                                    {{ form.phone_number(class="form-control" + (" is-invalid" if form.phone_number.errors else "")) }}
+                                    {% if form.phone_number.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.phone_number.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Social Media Links -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-share-alt"></i>
+                                Social Media & Portfolio
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    {{ form.portfolio_link.label(class="form-label") }}
+                                    {{ form.portfolio_link(class="form-control" + (" is-invalid" if form.portfolio_link.errors else "")) }}
+                                    {% if form.portfolio_link.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.portfolio_link.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.linkedin_profile.label(class="form-label") }}
+                                    {{ form.linkedin_profile(class="form-control" + (" is-invalid" if form.linkedin_profile.errors else "")) }}
+                                    {% if form.linkedin_profile.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.linkedin_profile.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.twitter_profile.label(class="form-label") }}
+                                    {{ form.twitter_profile(class="form-control" + (" is-invalid" if form.twitter_profile.errors else "")) }}
+                                    {% if form.twitter_profile.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.twitter_profile.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.instagram_profile.label(class="form-label") }}
+                                    {{ form.instagram_profile(class="form-control" + (" is-invalid" if form.instagram_profile.errors else "")) }}
+                                    {% if form.instagram_profile.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.instagram_profile.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Professional Details -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-chart-line"></i>
+                                Professional Details
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group">
+                                    {{ form.hourly_rate.label(class="form-label") }}
+                                    {{ form.hourly_rate(class="form-control" + (" is-invalid" if form.hourly_rate.errors else ""), step="0.01") }}
+                                    {% if form.hourly_rate.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.hourly_rate.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.rating.label(class="form-label") }}
+                                    {{ form.rating(class="form-control" + (" is-invalid" if form.rating.errors else ""), step="0.1", min="0", max="5") }}
+                                    {% if form.rating.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.rating.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                                
+                                <div class="form-group">
+                                    {{ form.reviews_count.label(class="form-label") }}
+                                    {{ form.reviews_count(class="form-control" + (" is-invalid" if form.reviews_count.errors else "")) }}
+                                    {% if form.reviews_count.errors %}
+                                        <div class="invalid-feedback">
+                                            {% for error in form.reviews_count.errors %}{{ error }}{% endfor %}
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Profile Picture -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-image"></i>
+                                Profile Picture
+                            </h3>
+                            {% if expert and expert.profile_picture %}
+                                <div class="current-image">
+                                    <p class="form-label">Current Profile Picture:</p>
+                                    <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" 
+                                         alt="{{ expert.name }}" class="current-profile-pic">
+                                </div>
+                            {% endif %}
+                            <div class="form-group">
+                                {{ form.profile_picture.label(class="form-label") }}
+                                {{ form.profile_picture(class="form-control" + (" is-invalid" if form.profile_picture.errors else "")) }}
+                                {% if form.profile_picture.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.profile_picture.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                                <small class="form-text">Supported formats: JPG, JPEG, PNG, GIF</small>
+                            </div>
+                        </div>
+
+                        <!-- Status Settings -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-toggle-on"></i>
+                                Status Settings
+                            </h3>
+                            <div class="form-grid">
+                                <div class="form-group checkbox-group">
+                                    {{ form.is_available(class="form-check-input") }}
+                                    {{ form.is_available.label(class="form-check-label") }}
+                                </div>
+                                
+                                <div class="form-group checkbox-group">
+                                    {{ form.is_verified(class="form-check-input") }}
+                                    {{ form.is_verified.label(class="form-check-label") }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Form Actions -->
+                    <div class="form-actions">
+                        {{ form.submit(class="btn btn-primary btn-lg") }}
+                        <a href="{{ url_for('main.dashboard_experts') }}" class="btn btn-outline btn-lg">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Auto-hide flash messages after 5 seconds
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        setTimeout(function() {
+            alert.style.opacity = '0';
+            setTimeout(function() {
+                alert.remove();
+            }, 300);
+        }, 5000);
+    });
+});
+
+// Image preview for profile picture upload
+document.getElementById('profile_picture').addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            let preview = document.querySelector('.image-preview');
+            if (!preview) {
+                preview = document.createElement('div');
+                preview.className = 'image-preview';
+                preview.innerHTML = '<p class="form-label">Preview:</p><img class="preview-image" alt="Preview">';
+                e.target.parentNode.appendChild(preview);
+            }
+            preview.querySelector('.preview-image').src = e.target.result;
+        };
+        reader.readAsDataURL(file);
+    }
+});
+</script>
+{% endblock %}

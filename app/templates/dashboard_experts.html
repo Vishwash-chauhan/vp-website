@@ -58,8 +58,11 @@
                     <h2 class="section-title">
                         <i class="fas fa-user-tie"></i>
                         Platform Experts
-                    </h2>
-                    <div class="section-actions">
+                    </h2>                    <div class="section-actions">
+                        <a href="{{ url_for('main.add_expert') }}" class="btn btn-primary">
+                            <i class="fas fa-plus"></i>
+                            Add Expert
+                        </a>
                         <span class="total-count">{{ experts.total }} total experts</span>
                     </div>
                 </div>
@@ -149,12 +152,16 @@
                                         {% endif %}
                                     </div>
                                 </td>
-                                <td>{{ expert.created_at.strftime('%Y-%m-%d') if expert.created_at else 'N/A' }}</td>
-                                <td>
+                                <td>{{ expert.created_at.strftime('%Y-%m-%d') if expert.created_at else 'N/A' }}</td>                                <td>
                                     <div class="action-buttons">
                                         <a href="{{ url_for('main.expert_detail', expert_id=expert.id) }}" 
                                            class="btn-action btn-view" title="View Profile" target="_blank">
                                             <i class="fas fa-eye"></i>
+                                        </a>
+                                        
+                                        <a href="{{ url_for('main.edit_expert', expert_id=expert.id) }}" 
+                                           class="btn-action btn-edit" title="Edit Expert">
+                                            <i class="fas fa-edit"></i>
                                         </a>
                                         
                                         <form method="POST" action="{{ url_for('main.toggle_expert_status', expert_id=expert.id) }}" style="display: inline;">

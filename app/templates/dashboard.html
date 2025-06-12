@@ -229,8 +229,7 @@
                                 Quick Actions
                             </h3>
                         </div>
-                        <div class="card-content">
-                            <div class="quick-actions-vertical">
+                        <div class="card-content">                            <div class="quick-actions-vertical">
                                 <a href="{{ url_for('main.dashboard_users') }}" class="quick-action-btn">
                                     <i class="fas fa-users"></i>
                                     <span>Manage Users</span>
@@ -238,6 +237,10 @@
                                 <a href="{{ url_for('main.dashboard_experts') }}" class="quick-action-btn">
                                     <i class="fas fa-user-tie"></i>
                                     <span>Manage Experts</span>
+                                </a>
+                                <a href="{{ url_for('main.add_expert') }}" class="quick-action-btn primary">
+                                    <i class="fas fa-plus"></i>
+                                    <span>Add New Expert</span>
                                 </a>
                                 <a href="{{ url_for('main.experts') }}" class="quick-action-btn">
                                     <i class="fas fa-eye"></i>
