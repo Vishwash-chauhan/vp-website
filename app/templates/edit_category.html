@@ -1,0 +1,257 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Category - VyapaarNiti Dashboard{% endblock %}
+
+{% block hero %}
+    <!-- Dashboard Hero Section -->
+    <section class="dashboard-hero">
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-edit"></i>
+                    </div>
+                    <div class="user-details">
+                        <h1 class="user-name">Edit Category</h1>
+                        <p class="user-email">Update category: {{ category.name }}</p>
+                        <span class="user-since">
+                            {% if category.experts %}
+                                {{ category.experts|length }} expert(s) assigned
+                            {% else %}
+                                No experts assigned
+                            {% endif %}
+                        </span>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <a href="{{ url_for('main.dashboard_categories') }}" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Categories
+                    </a>
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-messages">
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Edit Category Form -->
+    <section class="management-content">
+        <div class="container">
+            <div class="form-section">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2 class="form-title">
+                            <i class="fas fa-tag"></i>
+                            Category Information
+                        </h2>
+                        <p class="form-subtitle">Update the details for this category</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('main.edit_category', category_id=category.id) }}" class="category-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="categoryName" class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Category Name *
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="categoryName" 
+                                       name="name" 
+                                       placeholder="e.g., Digital Marketing, Finance, Technology"
+                                       value="{{ request.form.name if request.form.name else category.name }}"
+                                       required>
+                                <small class="form-text">Choose a clear, descriptive name for this category</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="categoryDescription" class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Description *
+                                </label>
+                                <textarea class="form-control" 
+                                          id="categoryDescription" 
+                                          name="description" 
+                                          rows="4"
+                                          placeholder="Provide a detailed description of this category and what types of expertise it covers..."
+                                          required>{{ request.form.description if request.form.description else category.description }}</textarea>
+                                <small class="form-text">Explain what this category covers to help users understand</small>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-check-group">
+                                    <div class="form-check-custom">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="categoryActive" 
+                                               name="is_active" 
+                                               value="true"
+                                               {% if request.form %}
+                                                   {{ 'checked' if request.form.is_active == 'true' }}
+                                               {% else %}
+                                                   {{ 'checked' if category.is_active }}
+                                               {% endif %}>
+                                        <label class="form-check-label" for="categoryActive">
+                                            <i class="fas fa-toggle-on"></i>
+                                            Set as Active Category
+                                        </label>
+                                    </div>
+                                    <small class="form-text">Active categories are visible to users and can be assigned to experts</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="{{ url_for('main.dashboard_categories') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i>
+                                Update Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Category Information -->
+                <div class="info-cards">
+                    <!-- Category Stats -->
+                    <div class="info-card">
+                        <div class="info-header">
+                            <h3><i class="fas fa-chart-bar"></i> Category Stats</h3>
+                        </div>
+                        <div class="info-content">
+                            <div class="stat-item">
+                                <span class="stat-label">Status:</span>
+                                <span class="stat-value {{ 'active' if category.is_active else 'inactive' }}">
+                                    {{ 'Active' if category.is_active else 'Inactive' }}
+                                </span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Experts Assigned:</span>
+                                <span class="stat-value">{{ category.experts|length if category.experts else 0 }}</span>
+                            </div>
+                            <div class="stat-item">
+                                <span class="stat-label">Created:</span>
+                                <span class="stat-value">{{ category.created_at.strftime('%B %d, %Y') if category.created_at else 'Unknown' }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Assigned Experts -->
+                    {% if category.experts and category.experts|length > 0 %}
+                    <div class="info-card">
+                        <div class="info-header">
+                            <h3><i class="fas fa-users"></i> Assigned Experts</h3>
+                        </div>
+                        <div class="info-content">
+                            <div class="experts-list">
+                                {% for expert in category.experts[:5] %}
+                                <div class="expert-item">
+                                    <div class="expert-avatar">
+                                        {% if expert.profile_picture %}
+                                            <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
+                                        {% else %}
+                                            <i class="fas fa-user"></i>
+                                        {% endif %}
+                                    </div>
+                                    <div class="expert-info">
+                                        <strong>{{ expert.name }}</strong>
+                                        <small>{{ expert.expertise[:30] }}{% if expert.expertise|length > 30 %}...{% endif %}</small>
+                                    </div>
+                                </div>
+                                {% endfor %}
+                                {% if category.experts|length > 5 %}
+                                <div class="more-experts">
+                                    <small>+ {{ category.experts|length - 5 }} more expert(s)</small>
+                                </div>
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+
+                    <!-- Guidelines -->
+                    <div class="info-card">
+                        <div class="info-header">
+                            <h3><i class="fas fa-lightbulb"></i> Edit Guidelines</h3>
+                        </div>
+                        <div class="info-content">
+                            <ul class="guidelines-list">
+                                <li><strong>Name Changes:</strong> Will affect all assigned experts</li>
+                                <li><strong>Deactivation:</strong> Category won't appear in new assignments</li>
+                                <li><strong>Description:</strong> Should clearly define the expertise scope</li>
+                                {% if category.experts and category.experts|length > 0 %}
+                                <li><strong>Warning:</strong> {{ category.experts|length }} expert(s) currently use this category</li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form validation
+document.querySelector('.category-form').addEventListener('submit', function(e) {
+    const name = document.getElementById('categoryName').value.trim();
+    const description = document.getElementById('categoryDescription').value.trim();
+    
+    if (!name || !description) {
+        e.preventDefault();
+        alert('Please fill in all required fields.');
+        return false;
+    }
+    
+    if (name.length < 3) {
+        e.preventDefault();
+        alert('Category name must be at least 3 characters long.');
+        return false;
+    }
+    
+    if (description.length < 10) {
+        e.preventDefault();
+        alert('Description must be at least 10 characters long.');
+        return false;
+    }
+});
+
+// Auto-hide flash messages
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        setTimeout(function() {
+            alert.style.opacity = '0';
+            setTimeout(function() {
+                alert.remove();
+            }, 300);
+        }, 5000);
+    });
+});
+</script>
+{% endblock %}

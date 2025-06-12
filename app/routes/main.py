@@ -325,74 +325,87 @@ def dashboard_categories():
                          active_count=active_count,
                          expert_count=expert_count)
 
-@main.route('/dashboard/category/add', methods=['POST'])
+@main.route('/dashboard/category/add', methods=['GET', 'POST'])
 @admin_required
 def add_category():
-    """Add a new category"""
-    try:
-        name = request.form.get('name', '').strip()
-        description = request.form.get('description', '').strip()
-        is_active = 'is_active' in request.form
-        
-        if not name:
-            flash('Category name is required.', 'error')
+    """Add a new category - separate page"""
+    if request.method == 'POST':
+        try:
+            name = request.form.get('name', '').strip()
+            description = request.form.get('description', '').strip()
+            is_active = 'is_active' in request.form
+            
+            if not name:
+                flash('Category name is required.', 'error')
+                return render_template('add_category.html', active_page='dashboard')
+            
+            if not description:
+                flash('Category description is required.', 'error')
+                return render_template('add_category.html', active_page='dashboard')
+            
+            # Check if category name already exists
+            if Category.query.filter(Category.name.ilike(name)).first():
+                flash('A category with this name already exists.', 'error')
+                return render_template('add_category.html', active_page='dashboard')
+            
+            category = Category(
+                name=name,
+                description=description,
+                is_active=is_active
+            )
+            
+            db.session.add(category)
+            db.session.commit()
+            flash(f'Category "{name}" has been added successfully!', 'success')
             return redirect(url_for('main.dashboard_categories'))
-        
-        # Check if category name already exists
-        if Category.query.filter(Category.name.ilike(name)).first():
-            flash('A category with this name already exists.', 'error')
-            return redirect(url_for('main.dashboard_categories'))
-        
-        category = Category(
-            name=name,
-            description=description,
-            is_active=is_active
-        )
-        
-        db.session.add(category)
-        db.session.commit()
-        flash(f'Category "{name}" has been added successfully!', 'success')
-        
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error adding category: {str(e)}', 'error')
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error adding category: {str(e)}', 'error')
+            return render_template('add_category.html', active_page='dashboard')
     
-    return redirect(url_for('main.dashboard_categories'))
+    return render_template('add_category.html', active_page='dashboard')
 
-@main.route('/dashboard/category/edit', methods=['POST'])
+@main.route('/dashboard/category/<int:category_id>/edit', methods=['GET', 'POST'])
 @admin_required
-def edit_category():
-    """Edit an existing category"""
-    try:
-        category_id = request.form.get('category_id', type=int)
-        name = request.form.get('name', '').strip()
-        description = request.form.get('description', '').strip()
-        is_active = 'is_active' in request.form
-        
-        category = Category.query.get_or_404(category_id)
-        
-        if not name:
-            flash('Category name is required.', 'error')
-            return redirect(url_for('main.dashboard_categories'))
-        
-        # Check if category name already exists (excluding current category)
-        existing = Category.query.filter(Category.name.ilike(name), Category.id != category_id).first()
-        if existing:
-            flash('A category with this name already exists.', 'error')
-            return redirect(url_for('main.dashboard_categories'))
-        
-        category.name = name
-        category.description = description
-        category.is_active = is_active
-        
-        db.session.commit()
-        flash(f'Category "{name}" has been updated successfully!', 'success')
-        
-    except Exception as e:
-        db.session.rollback()
-        flash(f'Error updating category: {str(e)}', 'error')
+def edit_category(category_id):
+    """Edit an existing category - separate page"""
+    category = Category.query.get_or_404(category_id)
     
-    return redirect(url_for('main.dashboard_categories'))
+    if request.method == 'POST':
+        try:
+            name = request.form.get('name', '').strip()
+            description = request.form.get('description', '').strip()
+            is_active = 'is_active' in request.form
+            
+            if not name:
+                flash('Category name is required.', 'error')
+                return render_template('edit_category.html', category=category, active_page='dashboard')
+            
+            if not description:
+                flash('Category description is required.', 'error')
+                return render_template('edit_category.html', category=category, active_page='dashboard')
+            
+            # Check if category name already exists (excluding current category)
+            existing = Category.query.filter(Category.name.ilike(name), Category.id != category_id).first()
+            if existing:
+                flash('A category with this name already exists.', 'error')
+                return render_template('edit_category.html', category=category, active_page='dashboard')
+            
+            category.name = name
+            category.description = description
+            category.is_active = is_active
+            
+            db.session.commit()
+            flash(f'Category "{name}" has been updated successfully!', 'success')
+            return redirect(url_for('main.dashboard_categories'))
+            
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Error updating category: {str(e)}', 'error')
+            return render_template('edit_category.html', category=category, active_page='dashboard')
+    
+    return render_template('edit_category.html', category=category, active_page='dashboard')
 
 @main.route('/dashboard/category/toggle', methods=['POST'])
 @admin_required

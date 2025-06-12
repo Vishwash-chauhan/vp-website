@@ -1,0 +1,186 @@
+{% extends "base.html" %}
+
+{% block title %}Add Category - VyapaarNiti Dashboard{% endblock %}
+
+{% block hero %}
+    <!-- Dashboard Hero Section -->
+    <section class="dashboard-hero">
+        <div class="container">
+            <div class="dashboard-header">
+                <div class="user-info">
+                    <div class="user-avatar">
+                        <i class="fas fa-plus-circle"></i>
+                    </div>
+                    <div class="user-details">
+                        <h1 class="user-name">Add New Category</h1>
+                        <p class="user-email">Create a new expertise category</p>
+                        <span class="user-since">Categories help organize expert profiles</span>
+                    </div>
+                </div>
+                <div class="dashboard-actions">
+                    <a href="{{ url_for('main.dashboard_categories') }}" class="btn btn-outline">
+                        <i class="fas fa-arrow-left"></i>
+                        Back to Categories
+                    </a>
+                    <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+                        <i class="fas fa-home"></i>
+                        Dashboard
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block main %}
+    <!-- Flash Messages -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+            <section class="flash-messages">
+                <div class="container">
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ 'success' if category == 'success' else 'danger' }}">
+                            <i class="fas fa-{{ 'check-circle' if category == 'success' else 'exclamation-triangle' }}"></i>
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                </div>
+            </section>
+        {% endif %}
+    {% endwith %}
+
+    <!-- Add Category Form -->
+    <section class="management-content">
+        <div class="container">
+            <div class="form-section">
+                <div class="form-container">
+                    <div class="form-header">
+                        <h2 class="form-title">
+                            <i class="fas fa-tag"></i>
+                            Category Information
+                        </h2>
+                        <p class="form-subtitle">Fill in the details for the new category</p>
+                    </div>
+
+                    <form method="POST" action="{{ url_for('main.add_category') }}" class="category-form">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label for="categoryName" class="form-label">
+                                    <i class="fas fa-tag"></i>
+                                    Category Name *
+                                </label>
+                                <input type="text" 
+                                       class="form-control" 
+                                       id="categoryName" 
+                                       name="name" 
+                                       placeholder="e.g., Digital Marketing, Finance, Technology"
+                                       value="{{ request.form.name if request.form.name }}"
+                                       required>
+                                <small class="form-text">Choose a clear, descriptive name for this category</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="categoryDescription" class="form-label">
+                                    <i class="fas fa-align-left"></i>
+                                    Description *
+                                </label>
+                                <textarea class="form-control" 
+                                          id="categoryDescription" 
+                                          name="description" 
+                                          rows="4"
+                                          placeholder="Provide a detailed description of this category and what types of expertise it covers..."
+                                          required>{{ request.form.description if request.form.description }}</textarea>
+                                <small class="form-text">Explain what this category covers to help users understand</small>
+                            </div>
+
+                            <div class="form-group">
+                                <div class="form-check-group">
+                                    <div class="form-check-custom">
+                                        <input class="form-check-input" 
+                                               type="checkbox" 
+                                               id="categoryActive" 
+                                               name="is_active" 
+                                               value="true"
+                                               {{ 'checked' if not request.form or request.form.is_active != 'false' }}>
+                                        <label class="form-check-label" for="categoryActive">
+                                            <i class="fas fa-toggle-on"></i>
+                                            Set as Active Category
+                                        </label>
+                                    </div>
+                                    <small class="form-text">Active categories are visible to users and can be assigned to experts</small>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <a href="{{ url_for('main.dashboard_categories') }}" class="btn btn-secondary">
+                                <i class="fas fa-times"></i>
+                                Cancel
+                            </a>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i>
+                                Create Category
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Category Guidelines -->
+                <div class="guidelines-card">
+                    <div class="guidelines-header">
+                        <h3><i class="fas fa-lightbulb"></i> Category Guidelines</h3>
+                    </div>
+                    <div class="guidelines-content">
+                        <ul class="guidelines-list">
+                            <li><strong>Name:</strong> Use clear, professional terminology</li>
+                            <li><strong>Description:</strong> Be specific about what expertise this covers</li>
+                            <li><strong>Uniqueness:</strong> Avoid creating duplicate or overlapping categories</li>
+                            <li><strong>Scope:</strong> Keep categories broad enough to be useful but specific enough to be meaningful</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Form validation
+document.querySelector('.category-form').addEventListener('submit', function(e) {
+    const name = document.getElementById('categoryName').value.trim();
+    const description = document.getElementById('categoryDescription').value.trim();
+    
+    if (!name || !description) {
+        e.preventDefault();
+        alert('Please fill in all required fields.');
+        return false;
+    }
+    
+    if (name.length < 3) {
+        e.preventDefault();
+        alert('Category name must be at least 3 characters long.');
+        return false;
+    }
+    
+    if (description.length < 10) {
+        e.preventDefault();
+        alert('Description must be at least 10 characters long.');
+        return false;
+    }
+});
+
+// Auto-hide flash messages
+document.addEventListener('DOMContentLoaded', function() {
+    const alerts = document.querySelectorAll('.alert');
+    alerts.forEach(function(alert) {
+        setTimeout(function() {
+            alert.style.opacity = '0';
+            setTimeout(function() {
+                alert.remove();
+            }, 300);
+        }, 5000);
+    });
+});
+</script>
+{% endblock %}

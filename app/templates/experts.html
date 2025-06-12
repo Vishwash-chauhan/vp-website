@@ -82,22 +82,9 @@
                         {% else %}
                             <img src="{{ url_for('static', filename='images/experts/' + (loop.index % 3 + 1)|string + '.png') }}" alt="{{ expert.name }}">
                         {% endif %}
-                    </div>
-                    <div class="expert-info">
+                    </div>                    <div class="expert-info">
                         <h3>{{ expert.name }}</h3>
                         <p class="expert-title">{{ expert.expertise }}</p>
-                        
-                        <!-- Categories Display -->
-                        {% if expert.categories %}
-                        <div class="expert-categories">
-                            {% for category in expert.categories[:2] %}
-                                <span class="category-tag">{{ category.name }}</span>
-                            {% endfor %}
-                            {% if expert.categories|length > 2 %}
-                                <span class="category-tag more">+{{ expert.categories|length - 2 }} more</span>
-                            {% endif %}
-                        </div>
-                        {% endif %}
                         
                         <p class="expert-description">{{ expert.bio[:100] + '...' if expert.bio and expert.bio|length > 100 else expert.bio or expert.about[:100] + '...' if expert.about and expert.about|length > 100 else expert.about or 'Professional expertise in ' + expert.expertise }}</p>
                         <div class="expert-rating">
