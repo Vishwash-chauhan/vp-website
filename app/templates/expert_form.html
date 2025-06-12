@@ -88,9 +88,8 @@
                                     </div>
                                 {% endif %}
                             </div>
-                            
-                            <div class="form-group">
-                                {{ form.about.label(class="form-label") }}
+                              <div class="form-group">
+                                <label for="about" class="form-label">Short Bio (To Display On Card)</label>
                                 {{ form.about(class="form-control textarea" + (" is-invalid" if form.about.errors else ""), rows="4") }}
                                 {% if form.about.errors %}
                                     <div class="invalid-feedback">

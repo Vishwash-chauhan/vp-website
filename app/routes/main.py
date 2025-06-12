@@ -28,7 +28,10 @@ def index():
     if not featured_experts:
         featured_experts = Expert.get_all_available()[:3]
     
-    return render_template('index.html', active_page='home', experts=featured_experts)
+    # Get 6 active categories for the popular categories section
+    popular_categories = Category.query.filter(Category.is_active == True).limit(6).all()
+    
+    return render_template('index.html', active_page='home', experts=featured_experts, categories=popular_categories)
 
 @main.route('/experts')
 def experts():

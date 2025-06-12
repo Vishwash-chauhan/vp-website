@@ -77,48 +77,53 @@
         <div class="container">
             <h2 class="section-title">Popular categories</h2>
             <div class="categories-grid">
+                {% for category in categories %}
                 <div class="category-card">
                     <div class="category-icon">
-                        <i class="fas fa-rocket"></i>
+                        {% if 'business' in category.name.lower() or 'development' in category.name.lower() %}
+                            <i class="fas fa-rocket"></i>
+                        {% elif 'marketing' in category.name.lower() or 'sales' in category.name.lower() %}
+                            <i class="fas fa-chart-line"></i>
+                        {% elif 'finance' in category.name.lower() or 'accounting' in category.name.lower() %}
+                            <i class="fas fa-dollar-sign"></i>
+                        {% elif 'technology' in category.name.lower() or 'it' in category.name.lower() %}
+                            <i class="fas fa-code"></i>
+                        {% elif 'operation' in category.name.lower() or 'management' in category.name.lower() %}
+                            <i class="fas fa-briefcase"></i>
+                        {% elif 'legal' in category.name.lower() or 'compliance' in category.name.lower() %}
+                            <i class="fas fa-gavel"></i>
+                        {% elif 'human' in category.name.lower() or 'hr' in category.name.lower() %}
+                            <i class="fas fa-users"></i>
+                        {% elif 'consulting' in category.name.lower() %}
+                            <i class="fas fa-handshake"></i>
+                        {% elif 'data' in category.name.lower() or 'analytics' in category.name.lower() %}
+                            <i class="fas fa-chart-bar"></i>
+                        {% elif 'digital' in category.name.lower() %}
+                            <i class="fas fa-laptop"></i>
+                        {% elif 'product' in category.name.lower() %}
+                            <i class="fas fa-cube"></i>
+                        {% elif 'design' in category.name.lower() or 'creative' in category.name.lower() %}
+                            <i class="fas fa-palette"></i>
+                        {% else %}
+                            <i class="fas fa-star"></i>
+                        {% endif %}
                     </div>
-                    <h3>Startups</h3>
-                    <p>Get advice from successful entrepreneurs</p>
+                    <h3>{{ category.name }}</h3>
+                    <p>
+                        {% set desc_parts = category.description.split(',') %}
+                        {% if desc_parts|length > 1 %}
+                            {{ desc_parts[0].strip() }}.
+                        {% else %}
+                            {% set desc_parts = category.description.split('.') %}
+                            {% if desc_parts|length > 1 %}
+                                {{ desc_parts[0].strip() }}.
+                            {% else %}
+                                {{ category.description.strip() }}{% if not category.description.endswith('.') %}.{% endif %}
+                            {% endif %}
+                        {% endif %}
+                    </p>
                 </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-chart-line"></i>
-                    </div>
-                    <h3>Marketing</h3>
-                    <p>Scale your business with proven strategies</p>
-                </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-briefcase"></i>
-                    </div>
-                    <h3>Career</h3>
-                    <p>Advance your career with expert guidance</p>
-                </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-dollar-sign"></i>
-                    </div>
-                    <h3>Finance</h3>
-                    <p>Make smart financial decisions</p>
-                </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-code"></i>
-                    </div>
-                    <h3>Technology</h3>
-                    <p>Stay ahead with tech insights</p>
-                </div>
-                <div class="category-card">
-                    <div class="category-icon">
-                        <i class="fas fa-heart"></i>
-                    </div>
-                    <h3>Life Coaching</h3>
-                    <p>Transform your personal life</p>
-                </div>
+                {% endfor %}
             </div>
         </div>
     </section>
