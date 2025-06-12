@@ -100,6 +100,30 @@
                             </div>
                         </div>
 
+                        <!-- Categories Section -->
+                        <div class="form-section">
+                            <h3 class="section-title">
+                                <i class="fas fa-tags"></i>
+                                Categories
+                            </h3>
+                            <div class="form-group">
+                                {{ form.categories.label(class="form-label") }}
+                                <div class="categories-checkboxes">
+                                    {% for subfield in form.categories %}
+                                        <div class="checkbox-item">
+                                            {{ subfield(class="form-check-input") }}
+                                            {{ subfield.label(class="form-check-label") }}
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                                {% if form.categories.errors %}
+                                    <div class="invalid-feedback">
+                                        {% for error in form.categories.errors %}{{ error }}{% endfor %}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
                         <!-- Contact Information -->
                         <div class="form-section">
                             <h3 class="section-title">

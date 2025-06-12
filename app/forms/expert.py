@@ -1,13 +1,21 @@
 from flask_wtf import FlaskForm
 from flask_wtf.file import FileField, FileAllowed
-from wtforms import StringField, TextAreaField, DecimalField, IntegerField, BooleanField, SubmitField
+from wtforms import StringField, TextAreaField, DecimalField, IntegerField, BooleanField, SubmitField, SelectMultipleField
 from wtforms.validators import DataRequired, Email, Optional, NumberRange, Length, URL
+from wtforms.widgets import CheckboxInput, ListWidget
+
+class MultiCheckboxField(SelectMultipleField):
+    widget = ListWidget(prefix_label=False)
+    option_widget = CheckboxInput()
 
 class ExpertForm(FlaskForm):
     name = StringField('Expert Name', validators=[DataRequired(), Length(min=2, max=100)])
     expertise = StringField('Expertise', validators=[DataRequired(), Length(min=5, max=500)])
     bio = TextAreaField('Professional Bio', validators=[Optional(), Length(max=1000)])
     about = TextAreaField('Background/About', validators=[Optional(), Length(max=1000)])
+    
+    # Categories
+    categories = MultiCheckboxField('Categories', coerce=int)
     
     # Contact Information
     contact = StringField('Email', validators=[Optional(), Email(), Length(max=100)])

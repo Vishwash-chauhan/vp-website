@@ -177,14 +177,6 @@
                                                 <i class="fas {{ 'fa-check-circle' if not expert.is_verified else 'fa-times-circle' }}"></i>
                                             </button>
                                         </form>
-                                        
-                                        <form method="POST" action="{{ url_for('main.delete_expert', expert_id=expert.id) }}" 
-                                              style="display: inline;" 
-                                              onsubmit="return confirm('Are you sure you want to delete expert {{ expert.name }}? This action cannot be undone.')">
-                                            <button type="submit" class="btn-action btn-delete" title="Delete Expert">
-                                                <i class="fas fa-trash"></i>
-                                            </button>
-                                        </form>
                                     </div>
                                 </td>
                             </tr>

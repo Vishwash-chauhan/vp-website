@@ -97,14 +97,34 @@
                                 <p class="about-text">No detailed biography available for this expert.</p>
                             {% endif %}
                         </div>
+                    </div>                    <!-- Categories Section -->
+                    <div class="info-card">
+                        <div class="card-header">
+                            <h2 class="card-title">
+                                <i class="fas fa-tags"></i>
+                                Categories
+                            </h2>
+                        </div>
+                        <div class="card-content">
+                            <div class="categories-container">
+                                {% if expert.categories %}
+                                    {% for category in expert.categories %}
+                                        <span class="category-badge">{{ category.name }}</span>
+                                    {% endfor %}
+                                {% else %}
+                                    <p class="no-categories">No categories assigned to this expert.</p>
+                                {% endif %}
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- Expertise Section -->
+                    <!-- Specific Expertise Section -->
+                    {% if expert.expertise %}
                     <div class="info-card">
                         <div class="card-header">
                             <h2 class="card-title">
                                 <i class="fas fa-brain"></i>
-                                Areas of Expertise
+                                Specific Expertise
                             </h2>
                         </div>
                         <div class="card-content">
@@ -118,7 +138,9 @@
                                     {% endif %}
                                 {% endfor %}
                             </div>
-                        </div>                    </div>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
                 
                 <div class="expert-sidebar-info">

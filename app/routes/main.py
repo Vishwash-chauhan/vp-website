@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for, flash
 from flask_login import login_required, current_user
 from functools import wraps
-from app.models import Expert, User
+from app.models import Expert, User, Category
 from app import db
 from app.forms.expert import ExpertForm
 import base64
@@ -32,9 +32,20 @@ def index():
 
 @main.route('/experts')
 def experts():
-    # Get all available experts
-    all_experts = Expert.get_all_available()
-    return render_template('experts.html', active_page='experts', experts=all_experts)
+    # Get all available experts with categories
+    page = request.args.get('page', 1, type=int)
+    category_id = request.args.get('category', type=int)
+    
+    query = Expert.query.filter(Expert.is_available == True)
+    
+    # Filter by category if specified
+    if category_id:
+        query = query.join(Expert.categories).filter(Category.id == category_id)
+    
+    all_experts = query.all()
+    categories = Category.query.filter(Category.is_active == True).all()
+    
+    return render_template('experts.html', active_page='experts', experts=all_experts, categories=categories)
 
 @main.route('/expert/<int:expert_id>')
 def expert_detail(expert_id):
@@ -197,6 +208,11 @@ def toggle_user_admin(user_id):
 def add_expert():
     """Add new expert"""
     form = ExpertForm()
+    
+    # Populate categories choices
+    categories = Category.query.filter(Category.is_active == True).all()
+    form.categories.choices = [(c.id, c.name) for c in categories]
+    
     if form.validate_on_submit():
         try:
             # Handle profile picture upload
@@ -224,6 +240,10 @@ def add_expert():
                 profile_picture=profile_picture_data
             )
             
+            # Add selected categories
+            selected_categories = Category.query.filter(Category.id.in_(form.categories.data)).all()
+            expert.categories = selected_categories
+            
             db.session.add(expert)
             db.session.commit()
             flash(f'Expert {expert.name} has been added successfully!', 'success')
@@ -241,6 +261,14 @@ def edit_expert(expert_id):
     """Edit expert profile"""
     expert = Expert.query.get_or_404(expert_id)
     form = ExpertForm(obj=expert)
+    
+    # Populate categories choices
+    categories = Category.query.filter(Category.is_active == True).all()
+    form.categories.choices = [(c.id, c.name) for c in categories]
+    
+    # Pre-select expert's current categories
+    if request.method == 'GET':
+        form.categories.data = [c.id for c in expert.categories]
     
     if form.validate_on_submit():
         try:
@@ -260,7 +288,12 @@ def edit_expert(expert_id):
             expert.reviews_count = form.reviews_count.data or 0
             expert.is_available = form.is_available.data
             expert.is_verified = form.is_verified.data
-              # Handle profile picture upload
+            
+            # Update categories
+            selected_categories = Category.query.filter(Category.id.in_(form.categories.data)).all()
+            expert.categories = selected_categories
+            
+            # Handle profile picture upload
             if form.profile_picture.data and hasattr(form.profile_picture.data, 'read'):
                 expert.profile_picture = form.profile_picture.data.read()
             
@@ -273,3 +306,149 @@ def edit_expert(expert_id):
             flash(f'Error updating expert: {str(e)}', 'error')
     
     return render_template('expert_form.html', form=form, expert=expert, title='Edit Expert', action='Update')
+
+# Category Management Routes
+
+@main.route('/dashboard/categories')
+@admin_required
+def dashboard_categories():
+    """Categories management page"""
+    categories = Category.query.order_by(Category.created_at.desc()).all()
+    active_count = Category.query.filter(Category.is_active == True).count()
+    
+    # Count experts with categories
+    expert_count = db.session.query(Expert.id).join(Expert.categories).distinct().count()
+    
+    return render_template('dashboard_categories.html', 
+                         active_page='dashboard',
+                         categories=categories,
+                         active_count=active_count,
+                         expert_count=expert_count)
+
+@main.route('/dashboard/category/add', methods=['POST'])
+@admin_required
+def add_category():
+    """Add a new category"""
+    try:
+        name = request.form.get('name', '').strip()
+        description = request.form.get('description', '').strip()
+        is_active = 'is_active' in request.form
+        
+        if not name:
+            flash('Category name is required.', 'error')
+            return redirect(url_for('main.dashboard_categories'))
+        
+        # Check if category name already exists
+        if Category.query.filter(Category.name.ilike(name)).first():
+            flash('A category with this name already exists.', 'error')
+            return redirect(url_for('main.dashboard_categories'))
+        
+        category = Category(
+            name=name,
+            description=description,
+            is_active=is_active
+        )
+        
+        db.session.add(category)
+        db.session.commit()
+        flash(f'Category "{name}" has been added successfully!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error adding category: {str(e)}', 'error')
+    
+    return redirect(url_for('main.dashboard_categories'))
+
+@main.route('/dashboard/category/edit', methods=['POST'])
+@admin_required
+def edit_category():
+    """Edit an existing category"""
+    try:
+        category_id = request.form.get('category_id', type=int)
+        name = request.form.get('name', '').strip()
+        description = request.form.get('description', '').strip()
+        is_active = 'is_active' in request.form
+        
+        category = Category.query.get_or_404(category_id)
+        
+        if not name:
+            flash('Category name is required.', 'error')
+            return redirect(url_for('main.dashboard_categories'))
+        
+        # Check if category name already exists (excluding current category)
+        existing = Category.query.filter(Category.name.ilike(name), Category.id != category_id).first()
+        if existing:
+            flash('A category with this name already exists.', 'error')
+            return redirect(url_for('main.dashboard_categories'))
+        
+        category.name = name
+        category.description = description
+        category.is_active = is_active
+        
+        db.session.commit()
+        flash(f'Category "{name}" has been updated successfully!', 'success')
+        
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating category: {str(e)}', 'error')
+    
+    return redirect(url_for('main.dashboard_categories'))
+
+@main.route('/dashboard/category/toggle', methods=['POST'])
+@admin_required
+def toggle_category():
+    """Toggle category active status"""
+    try:
+        data = request.get_json()
+        category_id = data.get('category_id')
+        is_active = data.get('is_active')
+        
+        category = Category.query.get_or_404(category_id)
+        category.is_active = is_active
+        
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Category "{category.name}" has been {"activated" if is_active else "deactivated"}'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500
+
+@main.route('/dashboard/category/delete', methods=['POST'])
+@admin_required
+def delete_category():
+    """Delete a category (only if no experts are assigned)"""
+    try:
+        data = request.get_json()
+        category_id = data.get('category_id')
+        
+        category = Category.query.get_or_404(category_id)
+        
+        # Check if any experts are assigned to this category
+        if category.experts:
+            return jsonify({
+                'success': False,
+                'message': f'Cannot delete category "{category.name}" because it has {len(category.experts)} expert(s) assigned to it.'
+            }), 400
+        
+        category_name = category.name
+        db.session.delete(category)
+        db.session.commit()
+        
+        return jsonify({
+            'success': True,
+            'message': f'Category "{category_name}" has been deleted successfully.'
+        })
+        
+    except Exception as e:
+        db.session.rollback()
+        return jsonify({
+            'success': False,
+            'message': str(e)
+        }), 500

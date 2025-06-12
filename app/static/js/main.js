@@ -548,8 +548,13 @@ function initializeExpertsPage() {
 
             // Category filter
             if (selectedCategory && isVisible) {
-                const cardCategory = card.getAttribute('data-category');
-                if (cardCategory !== selectedCategory) {
+                const cardCategories = card.getAttribute('data-categories');
+                if (cardCategories) {
+                    const categoryIds = cardCategories.split(',');
+                    if (!categoryIds.includes(selectedCategory)) {
+                        isVisible = false;
+                    }
+                } else {
                     isVisible = false;
                 }
             }

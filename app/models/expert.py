@@ -2,6 +2,13 @@ from flask_sqlalchemy import SQLAlchemy
 from app import db
 from datetime import datetime
 
+# Junction table for many-to-many relationship between experts and categories
+expert_categories = db.Table('expert_categories',
+    db.Column('expert_id', db.Integer, db.ForeignKey('experts.id'), primary_key=True),
+    db.Column('category_id', db.Integer, db.ForeignKey('categories.id'), primary_key=True),
+    db.Column('created_at', db.DateTime, default=datetime.utcnow)
+)
+
 class Expert(db.Model):
     __tablename__ = 'experts'
 
@@ -25,6 +32,12 @@ class Expert(db.Model):
     is_verified = db.Column(db.Boolean, nullable=True, default=False)
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow, onupdate=datetime.utcnow)
+
+    # Many-to-many relationship with categories
+    categories = db.relationship('Category', 
+                               secondary=expert_categories,
+                               lazy='subquery',
+                               backref=db.backref('experts', lazy=True))
 
     def __repr__(self):
         return f'<Expert {self.name}>'

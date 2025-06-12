@@ -28,18 +28,13 @@
                     </div>
                 </div>
 
-                <!-- Filters -->                <div class="filters-section">
-                    <div class="filter-group">
+                <!-- Filters -->                <div class="filters-section">                    <div class="filter-group">
                         <label for="categoryFilter">Category:</label>
                         <select id="categoryFilter" class="filter-select">
                             <option value="">All Categories</option>
-                            <option value="ai">AI & Machine Learning</option>
-                            <option value="data">Data Science</option>
-                            <option value="construction">Construction & Design</option>
-                            <option value="marketing">Marketing & Brand Strategy</option>
-                            <option value="content">Content Creation</option>
-                            <option value="technology">Technology</option>
-                            <option value="business">Business Development</option>
+                            {% for category in categories %}
+                                <option value="{{ category.id }}">{{ category.name }}</option>
+                            {% endfor %}
                         </select>
                     </div>
 
@@ -79,9 +74,8 @@
             </div>
 
             <!-- Experts Grid -->
-            <div class="all-experts-grid">
-                {% for expert in experts %}
-                <div class="expert-card" data-category="{{ expert.expertise|lower }}" data-price="{{ expert.hourly_rate }}" data-rating="{{ expert.rating }}">
+            <div class="all-experts-grid">                {% for expert in experts %}
+                <div class="expert-card" data-categories="{{ expert.categories|map(attribute='id')|join(',') }}" data-price="{{ expert.hourly_rate }}" data-rating="{{ expert.rating }}">
                     <div class="expert-avatar">
                         {% if expert.profile_picture %}
                             <img src="data:image/jpeg;base64,{{ expert.profile_picture|b64encode }}" alt="{{ expert.name }}">
@@ -92,6 +86,19 @@
                     <div class="expert-info">
                         <h3>{{ expert.name }}</h3>
                         <p class="expert-title">{{ expert.expertise }}</p>
+                        
+                        <!-- Categories Display -->
+                        {% if expert.categories %}
+                        <div class="expert-categories">
+                            {% for category in expert.categories[:2] %}
+                                <span class="category-tag">{{ category.name }}</span>
+                            {% endfor %}
+                            {% if expert.categories|length > 2 %}
+                                <span class="category-tag more">+{{ expert.categories|length - 2 }} more</span>
+                            {% endif %}
+                        </div>
+                        {% endif %}
+                        
                         <p class="expert-description">{{ expert.bio[:100] + '...' if expert.bio and expert.bio|length > 100 else expert.bio or expert.about[:100] + '...' if expert.about and expert.about|length > 100 else expert.about or 'Professional expertise in ' + expert.expertise }}</p>
                         <div class="expert-rating">
                             <span class="rating-stars">
