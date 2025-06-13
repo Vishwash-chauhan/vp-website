@@ -21,10 +21,14 @@ def admin_required(f):
 
 @main.route('/')
 def index():
-    # Get verified experts (as featured experts)
-    featured_experts = Expert.get_verified()[:3]
+    # Get featured experts first
+    featured_experts = Expert.get_featured()
     
-    # If no verified experts, get first 3 available experts
+    # If no featured experts, get verified experts as fallback
+    if not featured_experts:
+        featured_experts = Expert.get_verified()[:3]
+    
+    # If still no experts, get first 3 available experts
     if not featured_experts:
         featured_experts = Expert.get_all_available()[:3]
     
@@ -131,7 +135,8 @@ def dashboard_experts():
     """Expert management page"""
     page = request.args.get('page', 1, type=int)
     experts = Expert.query.paginate(page=page, per_page=10, error_out=False)
-    return render_template('dashboard_experts.html', active_page='dashboard', experts=experts)
+    featured_count = Expert.get_featured_count()
+    return render_template('dashboard_experts.html', active_page='dashboard', experts=experts, featured_count=featured_count)
 
 @main.route('/dashboard/user/<int:user_id>/delete', methods=['POST'])
 @admin_required
@@ -189,6 +194,29 @@ def toggle_expert_verification(expert_id):
     except Exception as e:
         db.session.rollback()
         flash(f'Error updating expert verification: {str(e)}', 'error')
+    return redirect(url_for('main.dashboard_experts'))
+
+@main.route('/dashboard/expert/<int:expert_id>/toggle-featured', methods=['POST'])
+@admin_required
+def toggle_expert_featured(expert_id):
+    """Toggle expert featured status"""
+    expert = Expert.query.get_or_404(expert_id)
+    try:
+        if expert.is_featured:
+            expert.unset_featured()
+            flash(f'Expert {expert.name} is no longer featured.', 'success')
+        else:
+            featured_count = Expert.get_featured_count()
+            if featured_count >= 3:
+                flash('Maximum 3 experts can be featured. Please unfeature another expert first.', 'error')
+            else:
+                if expert.set_featured():
+                    flash(f'Expert {expert.name} is now featured at position {expert.featured_position}.', 'success')
+                else:
+                    flash('Error setting expert as featured.', 'error')
+    except Exception as e:
+        db.session.rollback()
+        flash(f'Error updating expert featured status: {str(e)}', 'error')
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/user/<int:user_id>/toggle-admin', methods=['POST'])

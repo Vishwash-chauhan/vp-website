@@ -64,12 +64,15 @@
                             Add Expert
                         </a>
                         <span class="total-count">{{ experts.total }} total experts</span>
+                        <span class="featured-count">
+                            <i class="fas fa-star" style="color: #ffc107;"></i>
+                            {{ featured_count }}/3 featured
+                        </span>
                     </div>
                 </div>
                 
                 <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
+                    <table class="data-table">                        <thead>
                             <tr>
                                 <th>ID</th>
                                 <th>Expert</th>
@@ -77,6 +80,7 @@
                                 <th>Contact</th>
                                 <th>Rating</th>
                                 <th>Rate/Hr</th>
+                                <th>Featured</th>
                                 <th>Status</th>
                                 <th>Created</th>
                                 <th>Actions</th>
@@ -138,7 +142,19 @@
                                         ₹{{ expert.hourly_rate }}
                                     {% else %}
                                         <span class="text-muted">Not set</span>
-                                    {% endif %}
+                                    {% endif %}                                </td>
+                                <td>
+                                    <div class="featured-cell">
+                                        <form method="POST" action="{{ url_for('main.toggle_expert_featured', expert_id=expert.id) }}" style="display: inline;">
+                                            <button type="submit" class="btn-featured {{ 'featured' if expert.is_featured else '' }}" 
+                                                    title="{{ 'Remove from Featured' if expert.is_featured else 'Set as Featured' }}">
+                                                <i class="fas fa-star"></i>
+                                                {% if expert.is_featured and expert.featured_position %}
+                                                    <span class="position-badge">{{ expert.featured_position }}</span>
+                                                {% endif %}
+                                            </button>
+                                        </form>
+                                    </div>
                                 </td>
                                 <td>
                                     <div class="status-cell">
@@ -179,10 +195,9 @@
                                         </form>
                                     </div>
                                 </td>
-                            </tr>
-                            {% else %}
+                            </tr>                            {% else %}
                             <tr>
-                                <td colspan="9" class="text-center empty-message">No experts found</td>
+                                <td colspan="10" class="text-center empty-message">No experts found</td>
                             </tr>
                             {% endfor %}
                         </tbody>

@@ -30,6 +30,9 @@ class Expert(db.Model):
     reviews_count = db.Column(db.Integer, nullable=True, default=0)
     is_available = db.Column(db.Boolean, nullable=True, default=True)
     is_verified = db.Column(db.Boolean, nullable=True, default=False)
+    is_featured = db.Column(db.Boolean, nullable=True, default=False)
+    featured_position = db.Column(db.Integer, nullable=True)  # 1, 2, or 3 for featured order
+    featured_at = db.Column(db.DateTime, nullable=True)  # When it was featured
     created_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, nullable=True, default=datetime.utcnow, onupdate=datetime.utcnow)
 
@@ -62,6 +65,9 @@ class Expert(db.Model):
             'reviews_count': self.reviews_count,
             'is_available': self.is_available,
             'is_verified': self.is_verified,
+            'is_featured': self.is_featured,
+            'featured_position': self.featured_position,
+            'featured_at': self.featured_at,
             'created_at': self.created_at,
             'updated_at': self.updated_at
         }
@@ -85,6 +91,49 @@ class Expert(db.Model):
     def get_verified(cls):
         """Get verified experts"""
         return cls.query.filter_by(is_available=True, is_verified=True).all()
+
+    @classmethod
+    def get_featured(cls):
+        """Get featured experts ordered by featured_position and featured_at"""
+        return cls.query.filter_by(is_featured=True).order_by(
+            cls.featured_position.asc(),
+            cls.featured_at.desc()
+        ).limit(3).all()
+
+    @classmethod
+    def get_featured_count(cls):
+        """Get count of currently featured experts"""
+        return cls.query.filter_by(is_featured=True).count()
+
+    def set_featured(self, position=None):
+        """Set expert as featured with optional position"""
+        if position is None:
+            # Find next available position
+            existing_positions = [e.featured_position for e in Expert.query.filter_by(is_featured=True).all() if e.featured_position]
+            for pos in [1, 2, 3]:
+                if pos not in existing_positions:
+                    position = pos
+                    break
+        
+        if position and position in [1, 2, 3]:
+            # Remove any existing expert at this position
+            existing_expert = Expert.query.filter_by(is_featured=True, featured_position=position).first()
+            if existing_expert and existing_expert.id != self.id:
+                existing_expert.unset_featured()
+            
+            self.is_featured = True
+            self.featured_position = position
+            self.featured_at = datetime.utcnow()
+            db.session.commit()
+            return True
+        return False
+
+    def unset_featured(self):
+        """Remove expert from featured"""
+        self.is_featured = False
+        self.featured_position = None
+        self.featured_at = None
+        db.session.commit()
 
     @classmethod
     def search_experts(cls, search_term):
