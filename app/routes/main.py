@@ -1,23 +1,10 @@
 from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for, flash
-from flask_login import login_required, current_user
-from functools import wraps
 from app.models import Expert, User, Category
 from app import db
 from app.forms.expert import ExpertForm
 import base64
 
 main = Blueprint('main', __name__)
-
-def admin_required(f):
-    """Decorator to check if user is admin"""
-    @wraps(f)
-    @login_required
-    def decorated_function(*args, **kwargs):
-        if not current_user.is_authenticated or not current_user.is_admin:
-            flash('Access denied. Admin privileges required.', 'error')
-            return redirect(url_for('main.index'))
-        return f(*args, **kwargs)
-    return decorated_function
 
 @main.route('/')
 def index():
@@ -99,9 +86,8 @@ def about():
     return render_template('about.html', active_page='about')
 
 @main.route('/dashboard')
-@admin_required
 def dashboard():
-    """Admin Dashboard with CRUD operations for Users and Experts"""
+    """Dashboard - now accessible to all users"""
     # Get statistics
     total_users = User.query.count()
     total_experts = Expert.query.count()
@@ -122,7 +108,6 @@ def dashboard():
                          recent_experts=recent_experts)
 
 @main.route('/dashboard/users')
-@admin_required
 def dashboard_users():
     """User management page"""
     page = request.args.get('page', 1, type=int)
@@ -130,7 +115,6 @@ def dashboard_users():
     return render_template('dashboard_users.html', active_page='dashboard', users=users)
 
 @main.route('/dashboard/experts')
-@admin_required  
 def dashboard_experts():
     """Expert management page"""
     page = request.args.get('page', 1, type=int)
@@ -139,7 +123,6 @@ def dashboard_experts():
     return render_template('dashboard_experts.html', active_page='dashboard', experts=experts, featured_count=featured_count)
 
 @main.route('/dashboard/user/<int:user_id>/delete', methods=['POST'])
-@admin_required
 def delete_user(user_id):
     """Delete a user"""
     user = User.query.get_or_404(user_id)
@@ -153,7 +136,6 @@ def delete_user(user_id):
     return redirect(url_for('main.dashboard_users'))
 
 @main.route('/dashboard/expert/<int:expert_id>/delete', methods=['POST'])
-@admin_required
 def delete_expert(expert_id):
     """Delete an expert"""
     expert = Expert.query.get_or_404(expert_id)
@@ -167,7 +149,6 @@ def delete_expert(expert_id):
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/expert/<int:expert_id>/toggle-status', methods=['POST'])
-@admin_required
 def toggle_expert_status(expert_id):
     """Toggle expert availability status"""
     expert = Expert.query.get_or_404(expert_id)
@@ -182,7 +163,6 @@ def toggle_expert_status(expert_id):
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/expert/<int:expert_id>/toggle-verification', methods=['POST'])
-@admin_required
 def toggle_expert_verification(expert_id):
     """Toggle expert verification status"""
     expert = Expert.query.get_or_404(expert_id)
@@ -197,7 +177,6 @@ def toggle_expert_verification(expert_id):
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/expert/<int:expert_id>/toggle-featured', methods=['POST'])
-@admin_required
 def toggle_expert_featured(expert_id):
     """Toggle expert featured status"""
     expert = Expert.query.get_or_404(expert_id)
@@ -220,7 +199,6 @@ def toggle_expert_featured(expert_id):
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/user/<int:user_id>/toggle-admin', methods=['POST'])
-@admin_required
 def toggle_user_admin(user_id):
     """Toggle user admin status"""
     user = User.query.get_or_404(user_id)
@@ -235,7 +213,6 @@ def toggle_user_admin(user_id):
     return redirect(url_for('main.dashboard_users'))
 
 @main.route('/dashboard/expert/add', methods=['GET', 'POST'])
-@admin_required
 def add_expert():
     """Add new expert"""
     form = ExpertForm()
@@ -287,7 +264,6 @@ def add_expert():
     return render_template('expert_form.html', form=form, title='Add New Expert', action='Add')
 
 @main.route('/dashboard/expert/<int:expert_id>/edit', methods=['GET', 'POST'])
-@admin_required
 def edit_expert(expert_id):
     """Edit expert profile"""
     expert = Expert.query.get_or_404(expert_id)
@@ -341,7 +317,6 @@ def edit_expert(expert_id):
 # Category Management Routes
 
 @main.route('/dashboard/categories')
-@admin_required
 def dashboard_categories():
     """Categories management page"""
     categories = Category.query.order_by(Category.created_at.desc()).all()
@@ -357,7 +332,6 @@ def dashboard_categories():
                          expert_count=expert_count)
 
 @main.route('/dashboard/category/add', methods=['GET', 'POST'])
-@admin_required
 def add_category():
     """Add a new category - separate page"""
     if request.method == 'POST':
@@ -398,7 +372,6 @@ def add_category():
     return render_template('add_category.html', active_page='dashboard')
 
 @main.route('/dashboard/category/<int:category_id>/edit', methods=['GET', 'POST'])
-@admin_required
 def edit_category(category_id):
     """Edit an existing category - separate page"""
     category = Category.query.get_or_404(category_id)
@@ -439,7 +412,6 @@ def edit_category(category_id):
     return render_template('edit_category.html', category=category, active_page='dashboard')
 
 @main.route('/dashboard/category/toggle', methods=['POST'])
-@admin_required
 def toggle_category():
     """Toggle category active status"""
     try:
@@ -465,7 +437,6 @@ def toggle_category():
         }), 500
 
 @main.route('/dashboard/category/delete', methods=['POST'])
-@admin_required
 def delete_category():
     """Delete a category (only if no experts are assigned)"""
     try:
