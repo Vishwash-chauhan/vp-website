@@ -1,13 +1,19 @@
 import firebase_admin
-from firebase_admin import credentials, auth, exceptions
+from firebase_admin import credentials, auth
 from functools import wraps
-from flask import request, jsonify, session, g, current_app
+from flask import request, jsonify, current_app
 import os
 import json
-# Initialize Firebase Admin SDK
 
+# Firebase configuration for Python
+with open('firebase-auth.json', 'r') as f:
+    firebase_credentials = json.load(f)
+
+# Export this so it can be imported elsewhere
+firebaseConfig = firebase_credentials
+
+# Initialize Firebase Admin SDK
 def init_firebase_app():
-    """Initialize Firebase Admin SDK with the service account credentials"""
     if not firebase_admin._apps:
         cred = credentials.Certificate('firebase-auth.json')
         firebase_admin.initialize_app(cred)
@@ -84,7 +90,7 @@ def get_user(uid):
     """Get a user by UID"""
     try:
         return auth.get_user(uid)
-    except exceptions.FirebaseError as e:
+    except Exception as e:
         current_app.logger.error(f"Error getting user: {str(e)}")
         return None
 
@@ -97,7 +103,7 @@ def list_users(limit=1000):
         for user in page.iterate_all():
             users.append(user)
         return users
-    except exceptions.FirebaseError as e:
+    except Exception as e:
         current_app.logger.error(f"Error listing users: {str(e)}")
         return []
 
@@ -119,7 +125,7 @@ def create_user(email, password=None, display_name=None, phone_number=None):
             
         user = auth.create_user(**user_data)
         return user
-    except exceptions.FirebaseError as e:
+    except Exception as e:
         current_app.logger.error(f"Error creating user: {str(e)}")
         return None
 
@@ -140,7 +146,7 @@ def update_user(uid, display_name=None, email=None, phone_number=None, disabled=
             
         user = auth.update_user(uid, **user_data)
         return user
-    except exceptions.FirebaseError as e:
+    except Exception as e:
         current_app.logger.error(f"Error updating user: {str(e)}")
         return None
 
@@ -150,7 +156,7 @@ def delete_user(uid):
     try:
         auth.delete_user(uid)
         return True
-    except exceptions.FirebaseError as e:
+    except Exception as e:
         current_app.logger.error(f"Error deleting user: {str(e)}")
         return False
 
