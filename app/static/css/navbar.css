@@ -1,0 +1,167 @@
+/* Navbar styling enhancements */
+
+/* Auth buttons styling */
+.auth-btn {
+  padding: 8px 16px;
+  margin-left: 10px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  text-decoration: none;
+  display: inline-block;
+}
+
+.login-btn {
+  color: #3a86ff;
+  border: 1px solid #3a86ff;
+  background-color: transparent;
+}
+
+.login-btn:hover {
+  background-color: rgba(58, 134, 255, 0.1);
+}
+
+.signup-btn {
+  background-color: #3a86ff;
+  color: white;
+  border: 1px solid #3a86ff;
+}
+
+.signup-btn:hover {
+  background-color: #2a75f0;
+}
+
+/* User dropdown styling */
+.user-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.user-dropdown-text {
+  color: #3a86ff;
+  font-weight: 500;
+  cursor: pointer;
+  padding: 8px 12px;
+  display: inline-flex;
+  align-items: center;
+  position: relative;
+}
+
+.user-dropdown-text:after {
+  content: "";
+  display: inline-block;
+  width: 0;
+  height: 0;
+  margin-left: 8px;
+  vertical-align: middle;
+  border-top: 5px solid #3a86ff;
+  border-right: 5px solid transparent;
+  border-left: 5px solid transparent;
+}
+
+.user-dropdown-content {
+  display: none;
+  position: absolute;
+  right: 0;
+  min-width: 180px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.08);
+  z-index: 1;
+  background-color: white;
+  border-radius: 8px;
+  overflow: hidden;
+  margin-top: 5px;
+  border: 1px solid rgba(0,0,0,0.08);
+}
+
+.user-dropdown-content a {
+  color: #333;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  transition: background-color 0.3s ease;
+  font-size: 14px;
+}
+
+.user-dropdown-content a:hover {
+  background-color: #f7f7f7;
+  color: #3a86ff;
+}
+
+.user-dropdown:hover .user-dropdown-content {
+  display: block;
+}
+
+/* Mobile-only auth section - completely hidden on desktop */
+.mobile-only-auth {
+  display: none;
+}
+
+/* Class to make mobile auth items visible when needed */
+.mobile-auth-visible {
+  display: block !important;
+}
+
+/* Mobile responsiveness for auth buttons */
+@media (max-width: 768px) {
+  /* Hide auth buttons from the top nav on mobile */
+  .auth-buttons {
+    display: none !important;
+  }
+  
+  /* Hide user dropdown from the top nav on mobile */
+  .user-menu {
+    display: none !important;
+  }
+  
+  /* Show mobile-only auth section on mobile */
+  .mobile-only-auth {
+    display: block;
+    width: 100%;
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(0,0,0,0.1);
+  }
+  
+  /* Hide mobile auth items by default */
+  .mobile-only-auth > div {
+    display: none;
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+  }
+  
+  /* Only show mobile auth items that are marked as visible */
+  .mobile-only-auth > div.mobile-auth-visible {
+    display: block;
+  }
+    .mobile-user-name {
+    color: #3a86ff;
+    font-weight: 600;
+    padding: 15px 0;
+    font-size: 1.1rem;
+    margin-bottom: 10px;
+  }
+  
+  /* Style the login/signup links in the mobile menu */
+  .mobile-auth-link {
+    display: block;
+    padding: 12px 20px;
+    margin: 5px 2rem;
+    border-radius: 6px;
+    font-weight: 500;
+    text-decoration: none;
+    text-align: center;
+  }
+  
+  .mobile-login {
+    color: #3a86ff;
+    border: 1px solid #3a86ff;
+    background-color: transparent;
+  }
+  
+  .mobile-signup {
+    background-color: #3a86ff;
+    color: white;
+    border: 1px solid #3a86ff;
+  }
+}

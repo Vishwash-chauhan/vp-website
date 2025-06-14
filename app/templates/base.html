@@ -2,9 +2,9 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}VyapaarNiti{% endblock %}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>{% block title %}VyapaarNiti{% endblock %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/navbar.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     {% block head %}{% endblock %}
@@ -18,7 +18,8 @@
                     <a href="{{ url_for('main.index') }}">
                         <img src="{{ url_for('static', filename='images/logo/logo.png') }}" alt="VyapaarNiti" class="logo">
                     </a>
-                </div>                <ul class="nav-menu">
+                </div>                <!-- Main Navigation Menu -->
+                <ul class="nav-menu">
                     <li><a href="{{ url_for('main.index') }}" class="nav-link {% if active_page == 'home' %}active{% endif %}">Home</a></li>
                     <li><a href="{{ url_for('main.experts') }}" class="nav-link {% if active_page == 'experts' %}active{% endif %}">Browse Experts</a></li>
                     <li><a href="{{ url_for('main.club') }}" class="nav-link {% if active_page == 'club' %}active{% endif %}">VyapaarNiti Club</a></li>
@@ -26,21 +27,34 @@
                     <li class="admin-only" style="display: none;"><a href="{{ url_for('main.dashboard') }}" class="nav-link {% if active_page == 'dashboard' %}active{% endif %}">Dashboard</a></li>
                 </ul>
                 
-                <!-- Authentication Links -->
+                <!-- Mobile-only Auth Items -->
+                <div class="mobile-only-auth">
+                    <div class="mobile-user-name" id="mobile-user-name"></div>
+                    <div class="mobile-auth-login" id="mobile-auth-login">
+                        <a href="{{ url_for('auth.login') }}" class="mobile-auth-link mobile-login">Login</a>
+                    </div>
+                    <div class="mobile-auth-signup" id="mobile-auth-signup">
+                        <a href="{{ url_for('auth.signup') }}" class="mobile-auth-link mobile-signup">Sign Up</a>
+                    </div>
+                    <div class="mobile-auth-dashboard admin-only" id="mobile-auth-dashboard">
+                        <a href="{{ url_for('main.dashboard') }}" class="mobile-auth-link">Dashboard</a>
+                    </div>
+                    <div class="mobile-auth-logout" id="mobile-auth-logout">
+                        <a href="{{ url_for('auth.logout') }}" class="mobile-auth-link">Logout</a>
+                    </div>
+                </div>
+                  <!-- Authentication Links -->
                 <div id="auth-links" class="auth-buttons">
-                    <a href="{{ url_for('auth.login') }}" class="btn-outline">Login</a>
-                    <a href="{{ url_for('auth.signup') }}" class="btn-primary">Sign Up</a>
+                    <a href="{{ url_for('auth.login') }}" class="auth-btn login-btn">Login</a>
+                    <a href="{{ url_for('auth.signup') }}" class="auth-btn signup-btn">Sign Up</a>
                 </div>
                 
                 <!-- User Links (when logged in) -->
                 <div id="user-links" class="user-menu" style="display: none;">
                     <div class="user-dropdown">
-                        <button class="user-dropdown-btn">
-                            <span id="user-name">User</span>
-                            <i class="fas fa-chevron-down"></i>
-                        </button>
+                        <span class="user-dropdown-text" id="user-name">User</span>
                         <div class="user-dropdown-content">
-                            <a href="#" class="admin-only" style="display: none;">Admin Dashboard</a>
+                            <a href="{{ url_for('main.dashboard') }}" class="admin-only" style="display: none;">Dashboard</a>
                             <a href="{{ url_for('auth.logout') }}" id="logout-btn">Logout</a>
                         </div>
                     </div>

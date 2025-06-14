@@ -3,17 +3,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile Navigation Toggle
     const hamburger = document.querySelector('.hamburger');
     const navMenu = document.querySelector('.nav-menu');
+    const mobileAuthSection = document.querySelector('.mobile-only-auth');
 
     hamburger.addEventListener('click', function() {
         hamburger.classList.toggle('active');
         navMenu.classList.toggle('active');
+        
+        // Also toggle the mobile auth section visibility
+        if (mobileAuthSection) {
+            mobileAuthSection.classList.toggle('active');
+        }
     });
 
-    // Close mobile menu when clicking on a link
-    document.querySelectorAll('.nav-link').forEach(link => {
+    // Close mobile menu when clicking on any link in the mobile menu
+    document.querySelectorAll('.nav-link, .mobile-auth-link').forEach(link => {
         link.addEventListener('click', () => {
             hamburger.classList.remove('active');
             navMenu.classList.remove('active');
+            
+            // Also hide the mobile auth section
+            if (mobileAuthSection) {
+                mobileAuthSection.classList.remove('active');
+            }
         });
     });
 

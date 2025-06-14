@@ -85,6 +85,37 @@ function handleUnauthenticatedAccess() {
 }
 
 /**
+ * Set initial state for auth UI elements
+ * Called on page load
+ */
+function setInitialAuthUIState() {
+    // Get auth elements
+    const userLinksElement = document.getElementById('user-links');
+    const authLinksElement = document.getElementById('auth-links');
+    
+    // Mobile menu elements
+    const mobileUserName = document.getElementById('mobile-user-name');
+    const mobileAuthLogin = document.getElementById('mobile-auth-login');
+    const mobileAuthSignup = document.getElementById('mobile-auth-signup');
+    const mobileAuthDashboard = document.getElementById('mobile-auth-dashboard');
+    const mobileAuthLogout = document.getElementById('mobile-auth-logout');
+    
+    // Remove any inline styles that might have been added
+    if (userLinksElement) userLinksElement.removeAttribute('style');
+    if (authLinksElement) authLinksElement.removeAttribute('style');
+    
+    // Make sure the mobile auth section is hidden initially
+    const mobileAuthSection = document.querySelector('.mobile-only-auth');
+    if (mobileAuthSection) {
+        mobileAuthSection.classList.remove('active');
+    }
+    
+    // Default to showing login/signup for non-authenticated state
+    if (mobileAuthLogin) mobileAuthLogin.classList.add('mobile-auth-visible');
+    if (mobileAuthSignup) mobileAuthSignup.classList.add('mobile-auth-visible');
+}
+
+/**
  * Set up handlers for auth state UI updates
  */
 function setupAuthUIHandlers() {
@@ -105,6 +136,14 @@ function handleSignedInUI(event) {
     const userLinksElement = document.getElementById('user-links');
     const authLinksElement = document.getElementById('auth-links');
     
+    // Mobile menu elements
+    const mobileUserName = document.getElementById('mobile-user-name');
+    const mobileAuthLogin = document.getElementById('mobile-auth-login');
+    const mobileAuthSignup = document.getElementById('mobile-auth-signup');
+    const mobileAuthDashboard = document.getElementById('mobile-auth-dashboard');
+    const mobileAuthLogout = document.getElementById('mobile-auth-logout');
+    
+    // Desktop menu updates
     if (userNameElement) {
         userNameElement.textContent = user.displayName || user.email || 'User';
     }
@@ -115,6 +154,20 @@ function handleSignedInUI(event) {
     
     if (authLinksElement) {
         authLinksElement.style.display = 'none';
+    }    // Mobile menu updates
+    if (mobileUserName) {
+        mobileUserName.textContent = user.displayName || user.email || 'User';
+        mobileUserName.classList.add('mobile-auth-visible');
+    }
+    
+    // Hide login/signup, show logout in mobile menu
+    if (mobileAuthLogin) mobileAuthLogin.classList.remove('mobile-auth-visible');
+    if (mobileAuthSignup) mobileAuthSignup.classList.remove('mobile-auth-visible');
+    if (mobileAuthLogout) mobileAuthLogout.classList.add('mobile-auth-visible');
+    
+    // Show dashboard link if user is admin
+    if (mobileAuthDashboard && user.isAdmin) {
+        mobileAuthDashboard.classList.add('mobile-auth-visible');
     }
 }
 
@@ -125,6 +178,14 @@ function handleSignedOutUI() {
     const userLinksElement = document.getElementById('user-links');
     const authLinksElement = document.getElementById('auth-links');
     
+    // Mobile menu elements
+    const mobileUserName = document.getElementById('mobile-user-name');
+    const mobileAuthLogin = document.getElementById('mobile-auth-login');
+    const mobileAuthSignup = document.getElementById('mobile-auth-signup');
+    const mobileAuthDashboard = document.getElementById('mobile-auth-dashboard');
+    const mobileAuthLogout = document.getElementById('mobile-auth-logout');
+    
+    // Desktop menu updates
     if (userLinksElement) {
         userLinksElement.style.display = 'none';
     }
@@ -132,7 +193,18 @@ function handleSignedOutUI() {
     if (authLinksElement) {
         authLinksElement.style.display = '';
     }
-      // If on a protected page, redirect to home
+      // Mobile menu updates
+    if (mobileUserName) {
+        mobileUserName.classList.remove('mobile-auth-visible');
+    }
+    
+    // Show login/signup, hide logout and dashboard in mobile menu
+    if (mobileAuthLogin) mobileAuthLogin.classList.add('mobile-auth-visible');
+    if (mobileAuthSignup) mobileAuthSignup.classList.add('mobile-auth-visible');
+    if (mobileAuthLogout) mobileAuthLogout.classList.remove('mobile-auth-visible');
+    if (mobileAuthDashboard) mobileAuthDashboard.classList.remove('mobile-auth-visible');
+    
+    // If on a protected page, redirect to home
     if (isProtectedPath) {
         window.location.href = '/';
     }
@@ -186,7 +258,13 @@ async function updateUIFromStoredToken() {
 }
 
 // Initialize auth when DOM is ready
-document.addEventListener('DOMContentLoaded', initializeAuth);
+document.addEventListener('DOMContentLoaded', () => {
+    // Set initial state for UI elements
+    setInitialAuthUIState();
+    
+    // Initialize the main auth functionality
+    initializeAuth();
+});
 
 // Export for direct use
 export { verifyAuthForProtectedPage, updateUIFromStoredToken };
