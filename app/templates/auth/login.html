@@ -1,0 +1,106 @@
+{% extends "base.html" %}
+{% set active_page = 'login' %}
+
+{% block title %}Login - VyapaarNiti{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script type="module" src="{{ url_for('static', filename='js/auth-state.js') }}"></script>
+{% endblock %}
+
+{% block content %}
+<main class="auth-main">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <h1>Welcome Back</h1>
+                <p>Sign in to access your VyapaarNiti dashboard</p>
+            </div>
+
+            <!-- Loading Spinner -->
+            <div id="loading-spinner" class="loading-spinner" style="display: none;">
+                <div class="spinner"></div>
+                <p>Signing you in...</p>
+            </div>            <!-- Login Form -->
+            <form id="login-form" class="auth-form">
+                <div class="form-group">
+                    <label for="email-input">Email Address</label>
+                    <input type="email" id="email-input" name="email" required>
+                    <div class="error-message" id="email-error-message"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password-input">Password</label>
+                    <div class="password-input-container">
+                        <input type="password" id="password-input" name="password" required>
+                        <button type="button" class="password-toggle" id="password-toggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="error-message" id="password-error-message"></div>
+                </div>
+
+                <div class="form-actions">
+                    <button type="button" class="btn-primary" id="sign-in-btn">
+                        <span class="btn-text">Sign In</span>
+                        <span class="btn-loading" style="display: none;">
+                            <i class="fas fa-spinner fa-spin"></i> Signing In...
+                        </span>
+                    </button>
+                </div>
+
+                <div class="auth-divider">
+                    <span>or</span>
+                </div>
+
+                <button type="button" class="btn-google" id="sign-in-with-google-btn">
+                    <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-icon">
+                    Continue with Google
+                </button>
+
+                <div class="auth-links">
+                    <a href="{{ url_for('auth.forgot_password') }}" class="forgot-password-link">
+                        Forgot your password?
+                    </a>
+                </div>
+                
+                <!-- General error message display -->
+                <div class="error-message" id="general-error-message" style="display: none;"></div>
+            </form>
+
+            <div class="auth-footer">
+                <p>Don't have an account? 
+                    <a href="{{ url_for('auth.signup') }}" class="auth-link">Sign up here</a>
+                </p>
+            </div>
+        </div>
+    </div>
+</main>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<!-- Import modular login-auth.js file -->
+<script type="module" src="{{ url_for('static', filename='js/login-auth.js') }}"></script>
+<script>
+// Password toggle functionality (non-module)
+document.addEventListener('DOMContentLoaded', function() {
+    const passwordToggle = document.getElementById('password-toggle');
+    const passwordInput = document.getElementById('password');
+    
+    if (passwordToggle && passwordInput) {
+        passwordToggle.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            
+            const icon = passwordToggle.querySelector('i');
+            icon.classList.toggle('fa-eye');
+            icon.classList.toggle('fa-eye-slash');
+        });
+    }
+});
+</script>
+{% endblock %}

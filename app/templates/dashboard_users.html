@@ -65,23 +65,22 @@
                 </div>
                 
                 <div class="table-responsive">
-                    <table class="data-table">
-                        <thead>
+                    <table class="data-table">                        <thead>
                             <tr>
-                                <th>ID</th>
+                                <th>UID</th>
                                 <th>Name</th>
                                 <th>Email</th>
-                                <th>Contact</th>
-                                <th>Business Type</th>
+                                <th>Phone</th>
+                                <th>Provider</th>
                                 <th>Status</th>
-                                <th>Date Created</th>
+                                <th>Created</th>
                                 <th>Actions</th>
                             </tr>
                         </thead>
                         <tbody>
                             {% for user in users.items %}
                             <tr>
-                                <td>{{ user.id }}</td>
+                                <td>{{ user.uid[:8] }}...</td>
                                 <td>
                                     <div class="user-name-cell">
                                         <strong>{{ user.name }}</strong>
@@ -91,23 +90,31 @@
                                     </div>
                                 </td>
                                 <td>{{ user.email or 'N/A' }}</td>
-                                <td>{{ user.contact }}</td>
-                                <td>{{ user.business_type or 'N/A' }}</td>
+                                <td>{{ user.phone_number or 'N/A' }}</td>
+                                <td>{{ user.provider|capitalize }}</td>
                                 <td>
                                     <span class="status-badge {{ 'active' if user.is_active else 'inactive' }}">
-                                        {{ 'Active' if user.is_active else 'Inactive' }}
+                                        {{ 'Active' if user.is_active else 'Disabled' }}
                                     </span>
                                 </td>
-                                <td>{{ user.date_created.strftime('%Y-%m-%d %H:%M') if user.date_created else 'N/A' }}</td>
+                                <td>{{ user.date_created|int|datetime('%Y-%m-%d %H:%M') if user.date_created else 'N/A' }}</td>
                                 <td>
                                     <div class="action-buttons">
-                                        <form method="POST" action="{{ url_for('main.toggle_user_admin', user_id=user.id) }}" style="display: inline;">
+                                        <form method="POST" action="{{ url_for('main.toggle_user_admin', uid=user.uid) }}" style="display: inline;">
                                             <button type="submit" class="btn-action btn-toggle" 
                                                     title="{{ 'Remove Admin' if user.is_admin else 'Make Admin' }}">
                                                 <i class="fas {{ 'fa-user-minus' if user.is_admin else 'fa-user-plus' }}"></i>
-                                            </button>                                        </form>
+                                            </button>
+                                        </form>
                                         
-                                        <form method="POST" action="{{ url_for('main.delete_user', user_id=user.id) }}" 
+                                        <form method="POST" action="{{ url_for('main.toggle_user_status', uid=user.uid) }}" style="display: inline;">
+                                            <button type="submit" class="btn-action btn-toggle" 
+                                                    title="{{ 'Enable User' if not user.is_active else 'Disable User' }}">
+                                                <i class="fas {{ 'fa-toggle-on' if user.is_active else 'fa-toggle-off' }}"></i>
+                                            </button>
+                                        </form>
+                                        
+                                        <form method="POST" action="{{ url_for('main.delete_user', uid=user.uid) }}" 
                                               style="display: inline;" 
                                               onsubmit="return confirm('Are you sure you want to delete user {{ user.name }}? This action cannot be undone.')">
                                             <button type="submit" class="btn-action btn-delete" title="Delete User">
@@ -167,10 +174,47 @@
 {% endblock %}
 
 {% block scripts %}
-<script>
-function refreshData() {
-    location.reload();
+<script type="module">
+import { apiGet, apiPost } from '/static/js/api-interceptor.js';
+
+// Don't reload the page, use API to get fresh data
+async function refreshData() {
+    try {
+        const usersData = await apiGet('users');
+        updateUsersTable(usersData);
+    } catch (error) {
+        console.error('Failed to refresh users data:', error);
+        // If API call fails, fall back to page reload
+        location.reload();
+    }
 }
+
+// Update the users table with fresh data
+function updateUsersTable(data) {
+    // Implementation would go here - for now, fallback to reload
+    location.reload();
+    // In a future enhancement, we'd update the DOM directly without a page reload
+}
+
+// Handle user actions with API calls
+async function handleUserAction(action, userId) {
+    try {
+        const response = await apiPost(`users/${action}/${userId}`);
+        if (response.success) {
+            // Refresh the user data without a full page reload
+            await refreshData();
+        } else {
+            alert(response.error || 'Operation failed');
+        }
+    } catch (error) {
+        console.error(`Failed to ${action} user:`, error);
+        alert('Operation failed. Please try again.');
+    }
+}
+
+// Make the functions globally accessible
+window.refreshData = refreshData;
+window.handleUserAction = handleUserAction;
 
 // Auto-hide flash messages after 5 seconds
 document.addEventListener('DOMContentLoaded', function() {

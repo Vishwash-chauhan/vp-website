@@ -1,5 +1,6 @@
-from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for, flash
-from app.models import Expert, User, Category
+from flask import Blueprint, render_template, request, jsonify, abort, redirect, url_for, flash, g
+from app.utils.firebase_auth import firebase_login_required, admin_required, get_user, list_users, delete_user as firebase_delete_user, delete_user as firebase_delete_user
+from app.models import Expert, Category
 from app import db
 from app.forms.expert import ExpertForm
 import base64
@@ -86,17 +87,31 @@ def about():
     return render_template('about.html', active_page='about')
 
 @main.route('/dashboard')
+@admin_required
 def dashboard():
-    """Dashboard - now accessible to all users"""
-    # Get statistics
-    total_users = User.query.count()
+    """Admin Dashboard with CRUD operations for Users and Experts"""
+    # Get statistics from Firebase
+    firebase_users = list_users()
+    total_users = len(firebase_users)
+    
+    # Get statistics for experts from database
     total_experts = Expert.query.count()
     active_experts = Expert.query.filter_by(is_available=True).count()
     verified_experts = Expert.query.filter_by(is_verified=True).count()
     
-    # Get recent users and experts for display
-    recent_users = User.query.order_by(User.date_created.desc()).limit(5).all()
+    # Get recent experts for display
     recent_experts = Expert.query.order_by(Expert.created_at.desc()).limit(5).all()
+    
+    # Convert Firebase users to a format suitable for the template
+    recent_users = []
+    for user in firebase_users[:5]:  # Get the first 5 users
+        recent_users.append({
+            'uid': user.uid,
+            'name': user.display_name or 'User',
+            'email': user.email or '',
+            'date_created': user.user_metadata.creation_timestamp if user.user_metadata else None,
+            'is_admin': user.custom_claims.get('admin', False) if user.custom_claims else False
+        })
     
     return render_template('dashboard.html', 
                          active_page='dashboard',
@@ -108,13 +123,48 @@ def dashboard():
                          recent_experts=recent_experts)
 
 @main.route('/dashboard/users')
+@admin_required
 def dashboard_users():
     """User management page"""
+    firebase_users = list_users()
+    
+    # Convert Firebase users to a format suitable for the template
+    users = []
+    for user in firebase_users:
+        users.append({
+            'uid': user.uid,
+            'name': user.display_name or 'User',
+            'email': user.email,
+            'phone_number': user.phone_number,
+            'date_created': user.user_metadata.creation_timestamp if user.user_metadata else None,
+            'is_active': not user.disabled,
+            'is_admin': user.custom_claims.get('admin', False) if user.custom_claims else False,
+            'provider': user.provider_data[0].provider_id if user.provider_data else 'email'
+        })
+    
+    # Simple pagination implementation
     page = request.args.get('page', 1, type=int)
-    users = User.query.paginate(page=page, per_page=10, error_out=False)
-    return render_template('dashboard_users.html', active_page='dashboard', users=users)
+    per_page = 10
+    total = len(users)
+    
+    # Paginate manually
+    start = (page - 1) * per_page
+    end = start + per_page
+    paginated_users = users[start:end]
+    
+    # Create a simple pagination object
+    pagination = {
+        'page': page,
+        'per_page': per_page,
+        'total': total,
+        'pages': (total + per_page - 1) // per_page,
+        'items': paginated_users
+    }
+    
+    return render_template('dashboard_users.html', active_page='dashboard', users=pagination)
 
 @main.route('/dashboard/experts')
+@admin_required  
 def dashboard_experts():
     """Expert management page"""
     page = request.args.get('page', 1, type=int)
@@ -122,20 +172,32 @@ def dashboard_experts():
     featured_count = Expert.get_featured_count()
     return render_template('dashboard_experts.html', active_page='dashboard', experts=experts, featured_count=featured_count)
 
-@main.route('/dashboard/user/<int:user_id>/delete', methods=['POST'])
-def delete_user(user_id):
-    """Delete a user"""
-    user = User.query.get_or_404(user_id)
+@main.route('/dashboard/user/<uid>/delete', methods=['POST'])
+@admin_required
+def delete_user(uid):
+    """Delete a user through Firebase"""
+    
     try:
-        db.session.delete(user)
-        db.session.commit()
-        flash(f'User {user.name} has been deleted successfully.', 'success')
+        # First get the user for display name
+        user = get_user(uid)
+        if not user:
+            flash('User not found.', 'error')
+            return redirect(url_for('main.dashboard_users'))
+            
+        name = user.display_name or 'User'
+          # Delete the user using Firebase Admin SDK
+        success = firebase_delete_user(uid)
+        if success:
+            flash(f'User {name} has been deleted successfully.', 'success')
+        else:
+            flash('Failed to delete user.', 'error')
     except Exception as e:
-        db.session.rollback()
         flash(f'Error deleting user: {str(e)}', 'error')
+    
     return redirect(url_for('main.dashboard_users'))
 
 @main.route('/dashboard/expert/<int:expert_id>/delete', methods=['POST'])
+@admin_required
 def delete_expert(expert_id):
     """Delete an expert"""
     expert = Expert.query.get_or_404(expert_id)
@@ -149,6 +211,7 @@ def delete_expert(expert_id):
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/expert/<int:expert_id>/toggle-status', methods=['POST'])
+@admin_required
 def toggle_expert_status(expert_id):
     """Toggle expert availability status"""
     expert = Expert.query.get_or_404(expert_id)
@@ -163,6 +226,7 @@ def toggle_expert_status(expert_id):
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/expert/<int:expert_id>/toggle-verification', methods=['POST'])
+@admin_required
 def toggle_expert_verification(expert_id):
     """Toggle expert verification status"""
     expert = Expert.query.get_or_404(expert_id)
@@ -177,6 +241,7 @@ def toggle_expert_verification(expert_id):
     return redirect(url_for('main.dashboard_experts'))
 
 @main.route('/dashboard/expert/<int:expert_id>/toggle-featured', methods=['POST'])
+@admin_required
 def toggle_expert_featured(expert_id):
     """Toggle expert featured status"""
     expert = Expert.query.get_or_404(expert_id)
@@ -198,21 +263,66 @@ def toggle_expert_featured(expert_id):
         flash(f'Error updating expert featured status: {str(e)}', 'error')
     return redirect(url_for('main.dashboard_experts'))
 
-@main.route('/dashboard/user/<int:user_id>/toggle-admin', methods=['POST'])
-def toggle_user_admin(user_id):
+@main.route('/dashboard/user/<uid>/toggle-admin', methods=['POST'])
+@admin_required
+def toggle_user_admin(uid):
     """Toggle user admin status"""
-    user = User.query.get_or_404(user_id)
+    from app.utils.firebase_auth import set_admin_claim
+    
     try:
-        user.is_admin = not user.is_admin
-        db.session.commit()
-        status = "admin" if user.is_admin else "regular user"
-        flash(f'User {user.name} is now a {status}.', 'success')
+        # Get the user first to check current admin status
+        user = get_user(uid)
+        if not user:
+            flash('User not found.', 'error')
+            return redirect(url_for('main.dashboard_users'))
+            
+        # Check current admin status
+        is_admin = user.custom_claims and user.custom_claims.get('admin', False)
+        
+        # Toggle admin status
+        success = set_admin_claim(uid, not is_admin)
+        
+        if success:
+            status = "admin" if not is_admin else "regular user"
+            flash(f'User {user.display_name or "User"} is now a {status}.', 'success')
+        else:
+            flash('Failed to update admin status.', 'error')
     except Exception as e:
-        db.session.rollback()
-        flash(f'Error updating user admin status: {str(e)}', 'error')
+        flash(f'Error updating user: {str(e)}', 'error')
+    
+    return redirect(url_for('main.dashboard_users'))
+
+@main.route('/dashboard/user/<uid>/toggle-status', methods=['POST'])
+@admin_required
+def toggle_user_status(uid):
+    """Toggle user active/disabled status"""
+    from app.utils.firebase_auth import disable_user
+    
+    try:
+        # Get the user first to check current status
+        user = get_user(uid)
+        if not user:
+            flash('User not found.', 'error')
+            return redirect(url_for('main.dashboard_users'))
+            
+        # Check current disabled status
+        is_disabled = user.disabled
+        
+        # Toggle status (disable if currently enabled, enable if currently disabled)
+        user = disable_user(uid, not is_disabled)
+        
+        if user:
+            status = "enabled" if is_disabled else "disabled"
+            flash(f'User {user.display_name or "User"} is now {status}.', 'success')
+        else:
+            flash('Failed to update user status.', 'error')
+    except Exception as e:
+        flash(f'Error updating user: {str(e)}', 'error')
+    
     return redirect(url_for('main.dashboard_users'))
 
 @main.route('/dashboard/expert/add', methods=['GET', 'POST'])
+@admin_required
 def add_expert():
     """Add new expert"""
     form = ExpertForm()
@@ -264,6 +374,7 @@ def add_expert():
     return render_template('expert_form.html', form=form, title='Add New Expert', action='Add')
 
 @main.route('/dashboard/expert/<int:expert_id>/edit', methods=['GET', 'POST'])
+@admin_required
 def edit_expert(expert_id):
     """Edit expert profile"""
     expert = Expert.query.get_or_404(expert_id)
@@ -317,6 +428,7 @@ def edit_expert(expert_id):
 # Category Management Routes
 
 @main.route('/dashboard/categories')
+@admin_required
 def dashboard_categories():
     """Categories management page"""
     categories = Category.query.order_by(Category.created_at.desc()).all()
@@ -332,6 +444,7 @@ def dashboard_categories():
                          expert_count=expert_count)
 
 @main.route('/dashboard/category/add', methods=['GET', 'POST'])
+@admin_required
 def add_category():
     """Add a new category - separate page"""
     if request.method == 'POST':
@@ -372,6 +485,7 @@ def add_category():
     return render_template('add_category.html', active_page='dashboard')
 
 @main.route('/dashboard/category/<int:category_id>/edit', methods=['GET', 'POST'])
+@admin_required
 def edit_category(category_id):
     """Edit an existing category - separate page"""
     category = Category.query.get_or_404(category_id)
@@ -412,6 +526,7 @@ def edit_category(category_id):
     return render_template('edit_category.html', category=category, active_page='dashboard')
 
 @main.route('/dashboard/category/toggle', methods=['POST'])
+@admin_required
 def toggle_category():
     """Toggle category active status"""
     try:
@@ -437,6 +552,7 @@ def toggle_category():
         }), 500
 
 @main.route('/dashboard/category/delete', methods=['POST'])
+@admin_required
 def delete_category():
     """Delete a category (only if no experts are assigned)"""
     try:
