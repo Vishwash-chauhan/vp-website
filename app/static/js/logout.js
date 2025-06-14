@@ -18,12 +18,11 @@ if (logoutBtn) {
             
             const auth = getAuth();
             await signOut(auth);
-            
-            // Clear all auth data from localStorage
+              // Clear all auth data from localStorage
             clearAuthData();
             
-            // Redirect to login page
-            window.location.href = '/auth/login?logout=success';
+            // Redirect to home page
+            window.location.href = '/';
         } catch (error) {
             console.error("Error signing out:", error);
             alert("Failed to log out. Please try again.");

@@ -77,20 +77,11 @@ async function handleUserSignedIn(user) {
                 if (data.success) {
                     // Get user data
                     const userData = data.user;
+                      // Always redirect to home page
+                    const redirectUrl = '/';
                     
-                    // Determine redirect URL
-                    let redirectUrl;
-                    
-                    if (userData.isAdmin) {
-                        // Admin users go to dashboard
-                        redirectUrl = '/dashboard';
-                    } else {
-                        // Regular users go to saved redirect URL or home
-                        redirectUrl = getAndClearRedirectUrl();
-                    }
-                    
-                    // Redirect to appropriate page
-                    console.log(`Authentication successful. Redirecting to: ${redirectUrl}`);
+                    // Redirect to home page
+                    console.log('Authentication successful. Redirecting to home page.');
                     window.location.href = redirectUrl;
                 } else {
                     // Handle error

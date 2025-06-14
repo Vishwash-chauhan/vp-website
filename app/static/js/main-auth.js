@@ -80,11 +80,8 @@ async function verifyAuthForProtectedPage() {
  * Handle case when unauthenticated user tries to access protected page
  */
 function handleUnauthenticatedAccess() {
-    // Save the current URL to redirect back after login
-    setAuthRedirectUrl(window.location.pathname);
-    
-    // Redirect to login page
-    window.location.href = '/auth/login?redirect=' + encodeURIComponent(window.location.pathname);
+    // Redirect directly to home page
+    window.location.href = '/';
 }
 
 /**
@@ -135,10 +132,9 @@ function handleSignedOutUI() {
     if (authLinksElement) {
         authLinksElement.style.display = '';
     }
-    
-    // If on a protected page, redirect to login
+      // If on a protected page, redirect to home
     if (isProtectedPath) {
-        handleUnauthenticatedAccess();
+        window.location.href = '/';
     }
 }
 
