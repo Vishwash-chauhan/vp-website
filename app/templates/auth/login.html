@@ -8,6 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/auth.css') }}">
 <script type="module" src="{{ url_for('static', filename='js/auth-state.js') }}"></script>
 {% endblock %}
 
@@ -59,13 +60,13 @@
                 <button type="button" class="btn-google" id="sign-in-with-google-btn">
                     <img src="https://developers.google.com/identity/images/g-logo.png" alt="Google" class="google-icon">
                     Continue with Google
-                </button>
-
+                </button>                <!-- 
                 <div class="auth-links">
                     <a href="{{ url_for('auth.forgot_password') }}" class="forgot-password-link">
                         Forgot your password?
                     </a>
                 </div>
+                -->
                 
                 <!-- General error message display -->
                 <div class="error-message" id="general-error-message" style="display: none;"></div>
@@ -89,7 +90,7 @@
 // Password toggle functionality (non-module)
 document.addEventListener('DOMContentLoaded', function() {
     const passwordToggle = document.getElementById('password-toggle');
-    const passwordInput = document.getElementById('password');
+    const passwordInput = document.getElementById('password-input');
     
     if (passwordToggle && passwordInput) {
         passwordToggle.addEventListener('click', function() {
